@@ -786,7 +786,7 @@ namespace MidiPlayerTK
             if (midiStreamPlayer != null && (IsplayingLoopPresets || IsplayingLoopNotes))
             {
                 float time = Time.realtimeSinceStartup - LastTimeChange;
-                if(myValue > 10)//if (time > Frequency)
+                if(Input.GetKeyDown(KeyCode.Return)) // debug if statement //if(myValue > 10) = serial input if statement //if (time > Frequency) = original if statement
                 {
                     // It's time to generate some notes ;-)
                     LastTimeChange = Time.realtimeSinceStartup;
