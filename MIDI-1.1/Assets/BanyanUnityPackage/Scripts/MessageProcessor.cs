@@ -20,14 +20,13 @@ public class MessageProcessor : MonoBehaviour
     {
         // Simple action taken based on the message sent
 
-        if(action.Equals("color"))
-        {
-            if (info.Equals("blue"))
+       
+            if (value>=200)
             {
                 GetComponent<Renderer>().material.color = new Color(0, 0, 255);
             }
 
-            if (info.Equals("red"))
+            else
             {
                 GetComponent<Renderer>().material.color = new Color(255, 0, 0);
             }
@@ -43,6 +42,6 @@ public class MessageProcessor : MonoBehaviour
             // Call this function to send your message back to Banyan
             messageSender.SendMessageToBanyan(target, "The cube turned " + info);
             Debug.Log("Finished sending message: " + info);
-        }
+        
     }
 }
