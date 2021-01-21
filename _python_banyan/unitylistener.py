@@ -11,7 +11,8 @@ import serial
 import zmq
 from python_banyan.banyan_base import BanyanBase
 
-BANYAN_IP="192.168.178.52"
+#IP address of the banyan backkplate
+BANYAN_IP="10.5.0.2"  #192.168.178.52
 
 class listener(BanyanBase):
     """
@@ -40,9 +41,11 @@ class listener(BanyanBase):
         """
         Listening for messages on port 5001 from Unity.
         """
+        # Define constants used to send to Unity
+        #live-server 
         host = "127.0.0.1"
         port = 5001
-
+        #only works, when unity game is on
         while True:
             try:
                 mySocket = socket.socket()

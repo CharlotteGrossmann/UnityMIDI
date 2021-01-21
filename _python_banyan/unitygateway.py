@@ -13,7 +13,8 @@ import zmq
 import traceback
 from python_banyan.banyan_base import BanyanBase
 
-BANYAN_IP="192.168.178.52"
+#IP address of the banyan backkplate
+BANYAN_IP="10.5.0.2"  #192.168.178.52
 
 class gateway(BanyanBase):
     """
@@ -74,10 +75,12 @@ class gateway(BanyanBase):
             # Check to see if the message received is a message we will send to Unity
             if topic == 'send_to_unity':
                 # Define constants used to send to Unity
+                #live-server 
                 host = '127.0.0.1'
                 port = 5000
 
                 # Create socket
+                #only works, when unity game is on
                 mySocket = socket.socket()
 
                 mySocket.connect((host,port))
@@ -85,12 +88,13 @@ class gateway(BanyanBase):
 
                 mySocket.send(message.encode())
                 mySocket.close()
-                print("hello, I'm opening a socket'")
 
+        #happens when connection to raspbi is there but unity is not started yet
         except ConnectionRefusedError:
             print("Your Unity receiver is not listening on: " + host + ", port: " + str(port))
             print("Could not send message: " + str(payload))
 
+        #ignore keyboard inputs
         except KeyboardInterrupt:
             self.clean_up()
 
