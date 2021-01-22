@@ -48,10 +48,10 @@ class EchoServer(BanyanBase):
         :param payload: message payload
         """
         # republish the message with a topic of reply
-        self.publish_payload(payload, 'send_to_unity')
+        self.publish_payload(payload, 'reply')
 
         # extract the message number from the payload
-        print('Message number:', payload['value'])
+        print('Message number:', payload['message_number'])
 
 
 def echo_server():

@@ -21,7 +21,7 @@ public class MessageProcessor : MonoBehaviour
         // Simple action taken based on the message sent
 
        
-            if (value>=200)
+            if (value>=1)
             {
                 GetComponent<Renderer>().material.color = new Color(0, 0, 255);
             }
@@ -33,7 +33,7 @@ public class MessageProcessor : MonoBehaviour
 
             // Below is an example of how to send a message back to Banyan.
             // You can put the following code in any script
-
+            
             // Find the Object Sender
             GameObject theObject = GameObject.Find("Sender");
             // Find the script attachted to that Object

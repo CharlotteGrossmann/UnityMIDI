@@ -46,8 +46,8 @@ class test(BanyanBase):
                 time.sleep(1)
 
                 # Define the Unity message to be sent
-                unity_message = {"action":"color", "info":"red", "value": 1, "target":"Cube"}
 
+                unity_message = {"action":"color", "info":"red", "value": 1, "target":"Cube"}
                 # Send the message
                 self.send_unity_message(unity_message)
 
