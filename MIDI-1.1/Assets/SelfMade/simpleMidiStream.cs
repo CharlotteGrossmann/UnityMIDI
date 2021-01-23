@@ -30,25 +30,25 @@ namespace MidiPlayerTK
 
         [Range(0, 127)]
         public int InstrumentSound; //sollte 0 sein für Klavier
-
+        /*
         [Range(0, 127)]
         public int CurrentPatchDrum;
-
+        */
         [Range(0, 127)]
         public int PanChange;
-
+        /*
         [Range(0, 127)]
         public int ModChange;
-
+        */
         const float DEFAULT_PITCH = 64;
 
-        [Range(0, 127)] //Tonhöhe
+        [Range(0, 127)] 
         public float PitchChange = DEFAULT_PITCH;
         private float currentVelocityPitch;
         private float LastTimePitchChange;
 
-        [Range(0, 127)]
-        public int ExpChange;
+       /* [Range(0, 127)]
+        public int ExpChange;*/
 
         /// <summary>
         /// Current note playing
@@ -65,13 +65,10 @@ namespace MidiPlayerTK
         private float[] valueGenerator;
         private const int nbrGenerator = 4;
 
-        //get banyan Melody info
-        public GameObject myMelody;
-        private int myNote;
-
-        //get banyan rhythm info
-        public GameObject myRhythm;
-        private int myPressure;
+        //get banyan  info
+        public GameObject Instrument;
+        private int mySustain;
+        private bool myButton;
 
         private void Awake()                                     
         {
@@ -164,16 +161,20 @@ namespace MidiPlayerTK
             Debug.LogFormat($"Preset {midiStreamPlayer.MPTK_ChannelPresetGetName(1)} defined on channel 1");
         }
 
-        public bool testLocalchange = false;
+        //public bool testLocalchange = false;
 
 
         // Update is called once per frame
         void Update()
         {
             
-            myNote = myMelody.GetComponent<MessageProcessor>().note;
-            myPressure = myRhythm.GetComponent<MessageProcessor>().pressure;
-          
+            CurrentNote = Instrument.GetComponent<MessageProcessor>().note;
+            Velocity = Instrument.GetComponent<MessageProcessor>().pressure;
+            PitchChange = Instrument.GetComponent<MessageProcessor>().pitch;
+            myButton = Instrument.GetComponent<MessageProcessor>().JoyStickButton;
+            mySustain = Instrument.GetComponent<MessageProcessor>().sustain;
+
+
             
             // Check that SoundFont is loaded and add a little wait (0.5 s by default) because Unity AudioSource need some time to be started
             if (!MidiPlayerGlobal.MPTK_IsReady())
@@ -195,8 +196,6 @@ namespace MidiPlayerTK
             //Noten erzeugung!
             if (midiStreamPlayer != null&&Input.GetKeyDown(KeyCode.Return))
             {
-                CurrentNote = myNote;
-                Velocity = myPressure;
                 midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent()
                 {
                     Command = MPTKCommand.PatchChange,

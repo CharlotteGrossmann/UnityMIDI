@@ -7,14 +7,24 @@
 
 public class MessageProcessor : MonoBehaviour
 {
-    public int sensorValue;
-    public string component;
+    private int sensorValue;
+    private string component;
+    private string secondaryValue;
+    private string lastValue;
     public int pressure;
     public int note;
+    public int pitch = 64;
+    public int sustain;
+    public bool JoyStickButton;
+
     public void DoAction(string action, string info, int value, string target)
     {
         sensorValue = value;
         component = action;
+        secondaryValue = info;
+        lastValue = target;
+
+
     }
     void Update()
     {
@@ -22,5 +32,14 @@ public class MessageProcessor : MonoBehaviour
             pressure = sensorValue;
         else if (component == "melody")
             note = sensorValue;
+        else if (component == "modulate")
+        {
+            pitch = sensorValue;
+            sustain = int.Parse(secondaryValue);
+            JoyStickButton = bool.Parse(lastValue);
+        }
+            
+            
+
     }   
 }

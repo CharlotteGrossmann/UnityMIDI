@@ -416,10 +416,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3608ab4e5a40034aac746aa2ad3e74c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensorValue: 0
-  component: 
   pressure: 0
   note: 0
+  pitch: 0
+  sustain: 0
+  JoyStickButton: 0
 --- !u!1 &704073159
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,14 +1007,9 @@ MonoBehaviour:
   Velocity: 100
   CurrentNote: 0
   InstrumentSound: 0
-  CurrentPatchDrum: 0
   PanChange: 0
-  ModChange: 0
   PitchChange: 64
-  ExpChange: 0
-  myMelody: {fileID: 673870079}
-  myRhythm: {fileID: 673870079}
-  testLocalchange: 0
+  Instrument: {fileID: 673870079}
 --- !u!1 &1994924972
 GameObject:
   m_ObjectHideFlags: 0
