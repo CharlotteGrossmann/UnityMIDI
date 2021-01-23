@@ -395,8 +395,8 @@ MonoBehaviour:
   ChordLibPlay: 0
   RangeLibPlay: 0
   CurrentChord: 0
-  StartNote: 48
-  EndNote: 71
+  StartNote: 59
+  EndNote: 90
   Velocity: 100
   StreamChannel: 0
   CurrentNote: 48

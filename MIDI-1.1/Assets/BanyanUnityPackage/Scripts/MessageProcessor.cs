@@ -7,41 +7,10 @@
 
 public class MessageProcessor : MonoBehaviour
 {
-
+    public int note;
     public void DoAction(string action, string info, int value, string target)
     {
-        // Based on the Banyan message, we will turn the cube object this script is attached to, either red or blue
-        ColorCube(action, info, value, target);
-    }
-
-
-
-    public void ColorCube(string action, string info, int value, string target)
-    {
-        // Simple action taken based on the message sent
-
-       
-            if (value>=1)
-            {
-                GetComponent<Renderer>().material.color = new Color(0, 0, 255);
-            }
-
-            else
-            {
-                GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-            }
-
-            // Below is an example of how to send a message back to Banyan.
-            // You can put the following code in any script
-            
-            // Find the Object Sender
-            GameObject theObject = GameObject.Find("Sender");
-            // Find the script attachted to that Object
-            BanyanMessageSender messageSender = theObject.GetComponent<BanyanMessageSender>();
-
-            // Call this function to send your message back to Banyan
-            messageSender.SendMessageToBanyan(target, "The cube turned " + info);
-            Debug.Log("Finished sending message: " + info);
-        
-    }
+        note = value;
+    }    
+    
 }

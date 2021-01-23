@@ -15,9 +15,6 @@ namespace MidiPlayerTK
         // Add a MidiStreamPlayer Prefab to your game object and defined midiStreamPlayer in the inspector with this prefab.
         public MidiStreamPlayer midiStreamPlayer;
 
-        [Range(0.05f, 10f)]
-        public float Frequency = 1;
-
         [Range(-10f, 100f)]
         public float NoteDuration = 0;
 
@@ -25,20 +22,11 @@ namespace MidiPlayerTK
         public float NoteDelay = 0;
 
 
-        /*bool RandomPlay = false; //muss vielleicht alles public bleiben, damit es funktioniert?
-        bool DrumKit = false;
-        bool ChordPlay = false;
-        int ArpeggioPlayChord = 0;
-        int DelayPlayScale = 200;
-        bool ChordLibPlay = false;
-        bool RangeLibPlay = false;
-        int CurrentChord;*/
-
         [Range(0, 127)]    //start und endnote müssten eigentlich dieselbe sein?
-        public int StartNote = 50;
+        public int StartNote = 0;
 
         [Range(0, 127)]
-        public int EndNote = 70;
+        public int EndNote = 127;
 
         [Range(0, 127)] //lautstärke des Tons
         public int Velocity = 100;
@@ -49,14 +37,8 @@ namespace MidiPlayerTK
         [Range(0, 127)]
         public int CurrentNote;
 
-        [Range(0, 127)] //definiert welches Instrument simuliert wird und müsste dasselbe sein wie EndPreset? 
-        public int StartPreset = 0;
-
         [Range(0, 127)]
-        public int EndPreset = 127;
-
-        [Range(0, 127)]
-        public int CurrentPreset;
+        public int CurrentPreset; //sollte 0 sein für Klavier
 
         [Range(0, 127)]
         public int CurrentPatchDrum;
@@ -68,6 +50,7 @@ namespace MidiPlayerTK
         public int ModChange;
 
         const float DEFAULT_PITCH = 64;
+
         [Range(0, 127)] //Tonhöhe
         public float PitchChange = DEFAULT_PITCH;
         private float currentVelocityPitch;
@@ -96,14 +79,11 @@ namespace MidiPlayerTK
         private float[] valueGenerator;
         private const int nbrGenerator = 4;
 
-        // Manage skin
-        /*public CustomStyle myStyle;  
-        public bool IsplayingLoopNotes;
-        public bool IsplayingLoopPresets;*/
-
         //get banyan Melody info
         public GameObject myMelody;
         private int myNote;
+        private int lastNote = -1;
+        private bool notePressed = true;
 
         private void Awake()                                        //passiert als erstes
         {
@@ -127,7 +107,8 @@ namespace MidiPlayerTK
             else
                 Debug.LogWarning("midiStreamPlayer is not defined. Check in Unity editor inspector of this gameComponent");
 
-            myNote = myMelody.GetComponent<simpleMIDIMessageProcessor>().note;
+            //myNote = myMelody.GetComponent<simpleMIDIMessageProcessor>().note;
+            
         }
 
         // Use this for initialization
@@ -203,6 +184,14 @@ namespace MidiPlayerTK
         // Update is called once per frame
         void Update()
         {
+            
+            myNote = myMelody.GetComponent<MessageProcessor>().note;
+            if (lastNote != myNote)
+            {
+                notePressed = true;
+                lastNote = myNote;
+            }
+            
             // Check that SoundFont is loaded and add a little wait (0.5 s by default) because Unity AudioSource need some time to be started
             if (!MidiPlayerGlobal.MPTK_IsReady())
                 return;
@@ -219,53 +208,43 @@ namespace MidiPlayerTK
                     //Debug.Log("DEFAULT_PITCH " + DEFAULT_PITCH + " " + PitchChange + " " + currentVelocityPitch);
                     midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent() { Command = MPTKCommand.PitchWheelChange, Value = (int)PitchChange << 7, Channel = StreamChannel });
                 }
-            }
-                                                                    //Noten erzeugung!
-            if (midiStreamPlayer != null && myNote!=-1)
+            }             
+            //Noten erzeugung!
+            if (midiStreamPlayer != null && (notePressed||Input.anyKeyDown))
             {
-                if (myNote==1)
+                if (myNote==1 || Input.GetKeyDown(KeyCode.A))
                 {
-                    //StartNote = 54;  //C3
-                    CurrentNote = 53;
+                    CurrentNote = 42; //C
                 }
-                else if (myNote == 2)
+                else if (myNote == 2|Input.GetKeyDown(KeyCode.S))
                 {
-                    //StartNote = 56;
-                    CurrentNote = 55;
+                    CurrentNote = 44; //D
                 }
-                else if(myNote == 3)
+                else if(myNote == 3 || Input.GetKeyDown(KeyCode.D))
                 {
-                    //StartNote = 58;
-                    CurrentNote = 57;
+                    CurrentNote = 46; //E
                 }
-                else if (myNote == 4)
+                else if (myNote == 4 || Input.GetKeyDown(KeyCode.F))
                 {
-                    //StartNote = 59;
-                    CurrentNote = 58;
+                    CurrentNote = 47; //F
                 }
-                else if (myNote == 5)
+                else if (myNote == 5 || Input.GetKeyDown(KeyCode.G))
                 {
-                    //StartNote = 61;
-                    CurrentNote = 60;
+                    CurrentNote = 49; //G
                 }
-                else if (myNote == 6)
+                else if (myNote == 6 || Input.GetKeyDown(KeyCode.H))
                 {
-                    //StartNote = 63;
-                    CurrentNote = 62;
+                    CurrentNote = 51; //A
                 }
-                else if (myNote == 7)
+                else if (myNote == 7 || Input.GetKeyDown(KeyCode.J))
+                { 
+                    CurrentNote = 53; //B
+                }
+                else if (myNote == 8 ||Input.GetKeyDown(KeyCode.K))
                 {
-                    //StartNote = 65;
-                    CurrentNote = 64;
-                    //EndNote = 65;
+                    CurrentNote = 54;//C
                 }
-                else if (myNote == 8)
-                {
-                    //StartNote = 66;
-                    CurrentNote = 65;
-                    //EndNote = 66;
-                }
-                print("return key pressed");
+
                 midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent()
                 {
                     Command = MPTKCommand.PatchChange,
@@ -274,15 +253,16 @@ namespace MidiPlayerTK
                 });
 
 
-                
-                if (++CurrentNote > EndNote) CurrentNote = StartNote;
-                if (CurrentNote < StartNote) CurrentNote = StartNote;
-                print("currentNote became startNote");
+
 
                 // Play note or chrod or scale without stopping the current (useful for performance test)
                 Play(false);
-                print("Play(false);");
                     
+            }
+
+            if (notePressed)
+            {
+                notePressed=false;
             }
         }
 
@@ -306,7 +286,6 @@ namespace MidiPlayerTK
         /// @snippet TestMidiStream.cs Example MPTK_PlayEvent
         private void PlayOneNote()
         {
-            print("PlayOneNote");
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
             // Start playing a new note
             NotePlaying = new MPTKEvent()
@@ -319,7 +298,7 @@ namespace MidiPlayerTK
                 Delay = Convert.ToInt64(NoteDelay * 1000f),                         //wird von Extra-Komponente beeinflusst
             };
             midiStreamPlayer.MPTK_PlayEvent(NotePlaying);
-            print("one note played");
+           
         }
         //! [Example MPTK_PlayEvent]
 
@@ -330,14 +309,12 @@ namespace MidiPlayerTK
           
         private void StopOneNote()                              //muss aufgerufen werden um die Note zu beenden
         {
-            print("StopOneNote");
             if (NotePlaying != null)
             {
-                Debug.Log("Stop note");
+                //Debug.Log("Stop note");
                 // Stop the note (method to simulate a real human on a keyboard : 
                 // duration is not known when note is triggered)
                 midiStreamPlayer.MPTK_StopEvent(NotePlaying);
-                print("note is stoped"); //wird nicht ausgegeben?
                 NotePlaying = null;
                
             }

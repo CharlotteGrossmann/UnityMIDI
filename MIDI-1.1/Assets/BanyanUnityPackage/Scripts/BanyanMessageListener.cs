@@ -63,7 +63,7 @@ namespace Banyan
                     singleMessage += messageFromBanyan[i];
                     if (messageFromBanyan[i].Equals('}'))
                     {
-                        Debug.Log(singleMessage);
+                        //Debug.Log(singleMessage);
                         Message message = JsonUtility.FromJson<Message>(singleMessage);
 
                         try
