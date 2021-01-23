@@ -16,17 +16,8 @@ namespace MidiPlayerTK
         public MidiStreamPlayer midiStreamPlayer;
 
         [Range(-10f, 100f)]
-        public float NoteDuration = 0;
+        public float NoteDuration = 0.7f;
 
-        [Range(0f, 10f)]
-        public float NoteDelay = 0;
-
-
-        [Range(0, 127)]    //start und endnote müssten eigentlich dieselbe sein?
-        public int StartNote = 0;
-
-        [Range(0, 127)]
-        public int EndNote = 127;
 
         [Range(0, 127)] //lautstärke des Tons
         public int Velocity = 100;
@@ -38,7 +29,7 @@ namespace MidiPlayerTK
         public int CurrentNote;
 
         [Range(0, 127)]
-        public int CurrentPreset; //sollte 0 sein für Klavier
+        public int InstrumentSound; //sollte 0 sein für Klavier
 
         [Range(0, 127)]
         public int CurrentPatchDrum;
@@ -59,18 +50,13 @@ namespace MidiPlayerTK
         [Range(0, 127)]
         public int ExpChange;
 
-        public int CountNoteToPlay = 1;
-        public int CountNoteChord = 3;
-        public int DegreeChord = 1;
-        public int CurrentScale = 0;
-
         /// <summary>
         /// Current note playing
         /// </summary>
         private MPTKEvent NotePlaying;
 
         private float LastTimeChange;
-                                                            //GUI Kram kann alles weg?
+                                                    
 
         // Popup to select a realtime generator
         private PopupListItem[] PopGenerator;
@@ -82,10 +68,12 @@ namespace MidiPlayerTK
         //get banyan Melody info
         public GameObject myMelody;
         private int myNote;
-        private int lastNote = -1;
-        private bool notePressed = true;
 
-        private void Awake()                                        //passiert als erstes
+        //get banyan rhythm info
+        public GameObject myRhythm;
+        private int myPressure;
+
+        private void Awake()                                     
         {
             if (midiStreamPlayer != null)
             {
@@ -107,7 +95,6 @@ namespace MidiPlayerTK
             else
                 Debug.LogWarning("midiStreamPlayer is not defined. Check in Unity editor inspector of this gameComponent");
 
-            //myNote = myMelody.GetComponent<simpleMIDIMessageProcessor>().note;
             
         }
 
@@ -129,11 +116,10 @@ namespace MidiPlayerTK
                 //PopGenerator[i] = new PopupListItem() { Title = "Select A Generator", OnSelect = GeneratorChanged, Tag = i, ColCount = 3, ColWidth = 250, };
             }
             LastTimeChange = Time.realtimeSinceStartup;
-            CurrentNote = StartNote;
+            //CurrentNote = StartNote;
             PanChange = 64;
             LastTimeChange = -9999999f;
             PitchChange = DEFAULT_PITCH;
-            CountNoteToPlay = 1;
         }
 
         /// <summary>
@@ -186,11 +172,8 @@ namespace MidiPlayerTK
         {
             
             myNote = myMelody.GetComponent<MessageProcessor>().note;
-            if (lastNote != myNote)
-            {
-                notePressed = true;
-                lastNote = myNote;
-            }
+            myPressure = myRhythm.GetComponent<MessageProcessor>().pressure;
+          
             
             // Check that SoundFont is loaded and add a little wait (0.5 s by default) because Unity AudioSource need some time to be started
             if (!MidiPlayerGlobal.MPTK_IsReady())
@@ -210,60 +193,25 @@ namespace MidiPlayerTK
                 }
             }             
             //Noten erzeugung!
-            if (midiStreamPlayer != null && (notePressed||Input.anyKeyDown))
+            if (midiStreamPlayer != null&&Input.GetKeyDown(KeyCode.Return))
             {
-                if (myNote==1 || Input.GetKeyDown(KeyCode.A))
-                {
-                    CurrentNote = 42; //C
-                }
-                else if (myNote == 2|Input.GetKeyDown(KeyCode.S))
-                {
-                    CurrentNote = 44; //D
-                }
-                else if(myNote == 3 || Input.GetKeyDown(KeyCode.D))
-                {
-                    CurrentNote = 46; //E
-                }
-                else if (myNote == 4 || Input.GetKeyDown(KeyCode.F))
-                {
-                    CurrentNote = 47; //F
-                }
-                else if (myNote == 5 || Input.GetKeyDown(KeyCode.G))
-                {
-                    CurrentNote = 49; //G
-                }
-                else if (myNote == 6 || Input.GetKeyDown(KeyCode.H))
-                {
-                    CurrentNote = 51; //A
-                }
-                else if (myNote == 7 || Input.GetKeyDown(KeyCode.J))
-                { 
-                    CurrentNote = 53; //B
-                }
-                else if (myNote == 8 ||Input.GetKeyDown(KeyCode.K))
-                {
-                    CurrentNote = 54;//C
-                }
-
+                CurrentNote = myNote;
+                Velocity = myPressure;
                 midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent()
                 {
                     Command = MPTKCommand.PatchChange,
-                    Value = CurrentPreset,
+                    Value = InstrumentSound,
                     Channel = StreamChannel,
                 });
 
-
-
-
                 // Play note or chrod or scale without stopping the current (useful for performance test)
                 Play(false);
-                    
+                
             }
+            if (Input.GetKeyUp(KeyCode.Return))
+                StopOneNote();
+                
 
-            if (notePressed)
-            {
-                notePressed=false;
-            }
         }
 
         /// <summary>
@@ -278,12 +226,7 @@ namespace MidiPlayerTK
             
         }
 
-        //! [Example MPTK_PlayEvent]                                Die Noten werden hier erzeugt
-        /// <summary>
-        /// Send the note to the player. Notes are plays in a thread, so call returns immediately.
-        /// The note is stopped automatically after the Duration defined.
-        /// </summary>
-        /// @snippet TestMidiStream.cs Example MPTK_PlayEvent
+       
         private void PlayOneNote()
         {
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
@@ -293,9 +236,9 @@ namespace MidiPlayerTK
                 Command = MPTKCommand.NoteOn,                                      //wird getriggert wenn alle Instrumentenkompont aktiv sind
                 Value = CurrentNote,                                              //Tonhöhe: Wird von der Melodiekomponente festgelegt
                 Channel = StreamChannel,                                         //bleibt gleich
-                Duration = Convert.ToInt64(NoteDuration * 1000f), // milliseconds, -1 to play undefinitely (Duration = -1) // wird von Rhythmuskomponente beeinflusst
+                Duration = -1,//Convert.ToInt64(NoteDuration * 1000f), // milliseconds, -1 to play undefinitely (Duration = -1) // wird von Rhythmuskomponente beeinflusst
                 Velocity = Velocity, // Sound can vary depending on the velocity //wird von Rhythmuskomponente beeinflusst
-                Delay = Convert.ToInt64(NoteDelay * 1000f),                         //wird von Extra-Komponente beeinflusst
+                                     
             };
             midiStreamPlayer.MPTK_PlayEvent(NotePlaying);
            

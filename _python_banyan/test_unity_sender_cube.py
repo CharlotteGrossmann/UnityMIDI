@@ -9,7 +9,7 @@ import time
 from python_banyan.banyan_base import BanyanBase
 
 #IP address of the banyan backkplate
-BANYAN_IP="10.5.0.2"  #192.168.178.52
+BANYAN_IP="192.168.2.103"  #192.168.178.52
 
 class test(BanyanBase):
     """

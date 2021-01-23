@@ -7,10 +7,20 @@
 
 public class MessageProcessor : MonoBehaviour
 {
+    public int sensorValue;
+    public string component;
+    public int pressure;
     public int note;
     public void DoAction(string action, string info, int value, string target)
     {
-        note = value;
-    }    
-    
+        sensorValue = value;
+        component = action;
+    }
+    void Update()
+    {
+        if (component == "rhythm")
+            pressure = sensorValue;
+        else if (component == "melody")
+            note = sensorValue;
+    }   
 }

@@ -15,9 +15,7 @@ class test(BanyanBase):
     """
     This class subscribes to all messages on the back plane and prints out both topic and payload.
     """
-
     
-
     def __init__(self, back_plane_ip_address=BANYAN_IP,
                  process_name=None, com_port="None", baud_rate=115200, log=False, quiet=False, loop_time="0.1"):
         """
@@ -26,7 +24,7 @@ class test(BanyanBase):
         :param subscriber_port: subscriber port number - matches that of backplane
         :param publisher_port: publisher port number - matches that of backplane
         """
-
+        pressure = 0
         # initialize the base class
         super().__init__(back_plane_ip_address,  process_name=process_name, numpy=True)
 
@@ -34,80 +32,21 @@ class test(BanyanBase):
 
         # Loop sending messages to unitygateway to request a cube color change
         while True:
-            pause = 1
+            
             try:
-
-                time.sleep(pause)
-
+                time.sleep(0.5)
                 # Define the Unity message to be sent
+                unity_message = {"action":"rhythm", "info":"blue", "value": 127, "target":"Cube"}
 
-                unity_message = {"action":"melody", "info":"red", "value": 42, "target":"Cube"}
-                 
                 # Send the message
                 self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
+                time.sleep(0.5)
                 # Define the Unity message to be sent
+                unity_message = {"action":"rhythm", "info":"blue", "value": 40, "target":"Cube"}
 
-                unity_message = {"action":"melody", "info":"red", "value": 44, "target":"Cube"}
-                  
                 # Send the message
                 self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 46, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 47, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 49, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 51, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 53, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
-
-                time.sleep(pause)
-
-                # Define the Unity message to be sent
-
-                unity_message = {"action":"melody", "info":"red", "value": 54, "target":"Cube"}
-                  
-                # Send the message
-                self.send_unity_message(unity_message)
+                
             except KeyboardInterrupt:
                 self.clean_up()
 

@@ -416,6 +416,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3608ab4e5a40034aac746aa2ad3e74c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensorValue: 0
+  component: 
+  pressure: 0
   note: 0
 --- !u!1 &704073159
 GameObject:
@@ -999,23 +1002,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   midiStreamPlayer: {fileID: 1550934383}
-  NoteDuration: 0.7
-  NoteDelay: 0
-  StartNote: 50
-  EndNote: 60
+  NoteDuration: -1
   Velocity: 100
   CurrentNote: 0
-  CurrentPreset: 0
+  InstrumentSound: 0
   CurrentPatchDrum: 0
   PanChange: 0
   ModChange: 0
   PitchChange: 64
   ExpChange: 0
-  CountNoteToPlay: 1
-  CountNoteChord: 3
-  DegreeChord: 1
-  CurrentScale: 0
   myMelody: {fileID: 673870079}
+  myRhythm: {fileID: 673870079}
   testLocalchange: 0
 --- !u!1 &1994924972
 GameObject:
