@@ -245,7 +245,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 046a94271890c9f4c9d49b483072bef3, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
@@ -1008,8 +1008,11 @@ MonoBehaviour:
   CurrentNote: 0
   InstrumentSound: 0
   PanChange: 0
-  PitchChange: 64
+  PitchChange: 0
   Instrument: {fileID: 673870079}
+  simulate_melody: 0
+  simulate_rhythm: 0
+  simulate_modulate: 0
 --- !u!1 &1994924972
 GameObject:
   m_ObjectHideFlags: 0

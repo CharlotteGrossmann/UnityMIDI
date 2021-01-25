@@ -76,7 +76,7 @@ namespace MidiPlayerTK
         [Range(0, 127)]
         public float PitchChange = DEFAULT_PITCH;
         private float currentVelocityPitch;
-        private float LastTimePitchChange;
+        private float LastTimePitchChange = 0;
 
         [Range(0, 127)]
         public int ExpChange;
@@ -111,10 +111,6 @@ namespace MidiPlayerTK
         // Manage skin
         public CustomStyle myStyle;
 
-        private Vector2 scrollerWindow = Vector2.zero;
-        private int buttonWidth = 250;
-        private float spaceVertival = 0;
-        private float widthFirstCol = 120;
         public bool IsplayingLoopNotes;
         public bool IsplayingLoopPresets;
 

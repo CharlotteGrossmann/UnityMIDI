@@ -36,8 +36,10 @@ public class MessageProcessor : MonoBehaviour
         {
             pitch = sensorValue;
             sustain = int.Parse(secondaryValue);
-            JoyStickButton = bool.Parse(lastValue);
+            // JoyStickButton = bool.Parse(lastValue);
         }
+        else
+            pitch = 64;
             
             
 

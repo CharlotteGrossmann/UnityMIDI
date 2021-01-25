@@ -29,27 +29,30 @@ class test(BanyanBase):
         super().__init__(back_plane_ip_address,  process_name=process_name, numpy=True)
 
         """"""
-
+        pitch = 0
         # Loop sending messages to unitygateway to request a cube color change
         while True:
             pause=1
+            if(pitch==64):
+                pitch=90
+
             try:
                 time.sleep(pause)
                 # Define the Unity message to be sent
-                unity_message = {"action":"modulate", "info":"102", "value": 127, "target":"Cube"}
+                unity_message = {"action":"modulate", "info":"102", "value": pitch, "target":"Cube"}
 
                 # Send the message
                 self.send_unity_message(unity_message)
                 time.sleep(pause)
                 # Define the Unity message to be sent
-                unity_message = {"action":"modulate", "info":"102", "value": 64, "target":"Cube"}
+                unity_message = {"action":"modulate", "info":"102", "value": pitch, "target":"Cube"}
 
                 # Send the message
                 self.send_unity_message(unity_message)
 
                 time.sleep(pause)
                 # Define the Unity message to be sent
-                unity_message = {"action":"modulate", "info":"0", "value": 64, "target":"Cube"}
+                unity_message = {"action":"modulate", "info":"0", "value": pitch, "target":"Cube"}
 
                 # Send the message
                 self.send_unity_message(unity_message)

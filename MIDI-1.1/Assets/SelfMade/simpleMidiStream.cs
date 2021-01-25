@@ -30,25 +30,18 @@ namespace MidiPlayerTK
 
         [Range(0, 127)]
         public int InstrumentSound; //sollte 0 sein für Klavier
-        /*
-        [Range(0, 127)]
-        public int CurrentPatchDrum;
-        */
+   
         [Range(0, 127)]
         public int PanChange;
-        /*
-        [Range(0, 127)]
-        public int ModChange;
-        */
+      
         const float DEFAULT_PITCH = 64;
 
         [Range(0, 127)] 
         public float PitchChange = DEFAULT_PITCH;
         private float currentVelocityPitch;
-        private float LastTimePitchChange;
+        private float LastTimePitchChange = 0;
 
-       /* [Range(0, 127)]
-        public int ExpChange;*/
+   
 
         /// <summary>
         /// Current note playing
@@ -69,6 +62,14 @@ namespace MidiPlayerTK
         public GameObject Instrument;
         private int mySustain;
         private bool myButton;
+
+        //keyboard mode
+        public bool simulate_melody = true;
+        public bool simulate_rhythm = true;
+        public bool simulate_modulate = true;
+
+        private int pastVelocity = 0;
+        private int keyNote = -1;
 
         private void Awake()                                     
         {
@@ -167,15 +168,9 @@ namespace MidiPlayerTK
         // Update is called once per frame
         void Update()
         {
-            
-            CurrentNote = Instrument.GetComponent<MessageProcessor>().note;
-            Velocity = Instrument.GetComponent<MessageProcessor>().pressure;
-            PitchChange = Instrument.GetComponent<MessageProcessor>().pitch;
-            myButton = Instrument.GetComponent<MessageProcessor>().JoyStickButton;
-            mySustain = Instrument.GetComponent<MessageProcessor>().sustain;
+           
 
 
-            
             // Check that SoundFont is loaded and add a little wait (0.5 s by default) because Unity AudioSource need some time to be started
             if (!MidiPlayerGlobal.MPTK_IsReady())
                 return;
@@ -190,12 +185,16 @@ namespace MidiPlayerTK
                         PitchChange = DEFAULT_PITCH;
                     //PitchChange = Mathf.Lerp(PitchChange, DEFAULT_PITCH, Time.deltaTime*10f);
                     //Debug.Log("DEFAULT_PITCH " + DEFAULT_PITCH + " " + PitchChange + " " + currentVelocityPitch);
-                    midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent() { Command = MPTKCommand.PitchWheelChange, Value = (int)PitchChange << 7, Channel = StreamChannel });
+                      midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent() { Command = MPTKCommand.PitchWheelChange, Value = (int)PitchChange << 7, Channel = StreamChannel });
                 }
-            }             
+            }            
+            
+
+
             //Noten erzeugung!
-            if (midiStreamPlayer != null&&Input.GetKeyDown(KeyCode.Return))
+            if (midiStreamPlayer != null)
             {
+                //update midi variables if necessary
                 midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent()
                 {
                     Command = MPTKCommand.PatchChange,
@@ -203,13 +202,41 @@ namespace MidiPlayerTK
                     Channel = StreamChannel,
                 });
 
-                // Play note or chrod or scale without stopping the current (useful for performance test)
-                Play(false);
-                
+
+                //melody simulation
+                if (simulate_melody)
+                    CurrentNote = Instrument.GetComponent<MessageProcessor>().note;
+                else if (!simulate_melody)
+                    CurrentNote = getKeys();
+
+                //rhythm simulation
+                if (simulate_rhythm)
+                {
+                    Velocity = Instrument.GetComponent<MessageProcessor>().pressure;
+                    mySustain = Instrument.GetComponent<MessageProcessor>().sustain;
+                    if (pastVelocity != Velocity)
+                        Play(false);
+                }
+                else if (!simulate_rhythm)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                        Play(false);
+
+                    if (Input.GetKeyUp(KeyCode.Return))
+                        StopOneNote();
+                }
+
+                //modulation simulation
+                if (simulate_modulate)
+                {
+                    PitchChange = Instrument.GetComponent<MessageProcessor>().pitch;
+                    myButton = Instrument.GetComponent<MessageProcessor>().JoyStickButton;
+                }
+                else if (!simulate_modulate)
+                    PitchChange = DEFAULT_PITCH;
             }
-            if (Input.GetKeyUp(KeyCode.Return))
-                StopOneNote();
-                
+
+            pastVelocity = Velocity;
 
         }
 
@@ -242,12 +269,8 @@ namespace MidiPlayerTK
             midiStreamPlayer.MPTK_PlayEvent(NotePlaying);
            
         }
-        //! [Example MPTK_PlayEvent]
-
-        /// <summary>
-        /// Play one shot
-        /// </summary>
-        /// 
+      
+      
           
         private void StopOneNote()                              //muss aufgerufen werden um die Note zu beenden
         {
@@ -260,6 +283,29 @@ namespace MidiPlayerTK
                 NotePlaying = null;
                
             }
+        }
+
+        private int getKeys()
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+                keyNote = 42;
+            else if (Input.GetKeyDown(KeyCode.S))
+                keyNote = 44;
+            else if (Input.GetKeyDown(KeyCode.D))
+                keyNote = 46;
+            else if (Input.GetKeyDown(KeyCode.F))
+                keyNote = 47;
+            else if (Input.GetKeyDown(KeyCode.G))
+                keyNote = 49;
+            else if (Input.GetKeyDown(KeyCode.H))
+                keyNote = 51;
+            else if (Input.GetKeyDown(KeyCode.J))
+                keyNote = 52;
+            else if (Input.GetKeyDown(KeyCode.K))
+                keyNote = 54;
+            else if(Input.GetKeyUp(KeyCode.A)||Input.GetKeyUp(KeyCode.S)|| Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.F) || Input.GetKeyUp(KeyCode.G) || Input.GetKeyUp(KeyCode.H) || Input.GetKeyUp(KeyCode.J) || Input.GetKeyUp(KeyCode.K))
+                keyNote = -1;
+            return keyNote;
         }
     }
 }

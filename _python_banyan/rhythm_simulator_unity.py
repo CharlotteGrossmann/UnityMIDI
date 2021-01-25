@@ -25,6 +25,7 @@ class test(BanyanBase):
         :param publisher_port: publisher port number - matches that of backplane
         """
         pressure = 0
+        timePassed = 0;
         # initialize the base class
         super().__init__(back_plane_ip_address,  process_name=process_name, numpy=True)
 
@@ -32,20 +33,35 @@ class test(BanyanBase):
 
         # Loop sending messages to unitygateway to request a cube color change
         while True:
+            if(timePassed==10):
+                timePassed=0
+            else:
+                timePassed+=1
             
             try:
-                time.sleep(0.5)
-                # Define the Unity message to be sent
-                unity_message = {"action":"rhythm", "info":"blue", "value": 127, "target":"Cube"}
+                if(timePassed==0):
+                    # Define the Unity message to be sent
+                    unity_message = {"action":"rhythm", "info":"blue", "value": 127, "target":"Cube"}
 
-                # Send the message
-                self.send_unity_message(unity_message)
-                time.sleep(0.5)
-                # Define the Unity message to be sent
-                unity_message = {"action":"rhythm", "info":"blue", "value": 40, "target":"Cube"}
+                    # Send the message
+                    self.send_unity_message(unity_message)
 
-                # Send the message
-                self.send_unity_message(unity_message)
+                elif(timePassed==4):
+                    # Define the Unity message to be sent
+                    unity_message = {"action":"rhythm", "info":"blue", "value": 40, "target":"Cube"}
+
+                    # Send the message
+                    self.send_unity_message(unity_message)
+
+                else: 
+                    time.sleep(0.5)
+                    '''# Define the Unity message to be sent
+                    unity_message = {"action":"rhythm", "info":"blue", "value": 0, "target":"Cube"}
+
+                    # Send the message
+                    self.send_unity_message(unity_message)'''
+                
+                
                 
             except KeyboardInterrupt:
                 self.clean_up()
