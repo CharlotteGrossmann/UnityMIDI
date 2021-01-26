@@ -64,8 +64,8 @@ namespace MidiPlayerTK
         private bool myButton;
 
         //keyboard mode
-        public bool simulate_melody = true;
-        public bool simulate_rhythm = true;
+        public bool banyan_melody = true;
+        public bool banyan_rhythm = true;
         public bool simulate_modulate = true;
 
         private int pastVelocity = 0;
@@ -204,20 +204,24 @@ namespace MidiPlayerTK
 
 
                 //melody simulation
-                if (simulate_melody)
+                if (banyan_melody)
                     CurrentNote = Instrument.GetComponent<MessageProcessor>().note;
-                else if (!simulate_melody)
+                else if (!banyan_melody)
                     CurrentNote = getKeys();
 
                 //rhythm simulation
-                if (simulate_rhythm)
+                if (banyan_rhythm)
                 {
                     Velocity = Instrument.GetComponent<MessageProcessor>().pressure;
                     mySustain = Instrument.GetComponent<MessageProcessor>().sustain;
+                    if (Velocity <= 40 && Velocity>0)
+                        Velocity = 40;
+                    if (Velocity >= 127)
+                        Velocity = 127;
                     if (pastVelocity != Velocity)
                         Play(false);
                 }
-                else if (!simulate_rhythm)
+                else if (!banyan_rhythm)
                 {
                     if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
                         Play(false);

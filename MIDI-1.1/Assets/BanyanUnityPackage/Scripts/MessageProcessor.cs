@@ -24,7 +24,6 @@ public class MessageProcessor : MonoBehaviour
         secondaryValue = info;
         lastValue = target;
 
-
     }
     void Update()
     {

@@ -1010,8 +1010,8 @@ MonoBehaviour:
   PanChange: 0
   PitchChange: 0
   Instrument: {fileID: 673870079}
-  simulate_melody: 0
-  simulate_rhythm: 0
+  banyan_melody: 1
+  banyan_rhythm: 1
   simulate_modulate: 0
 --- !u!1 &1994924972
 GameObject:

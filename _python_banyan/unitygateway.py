@@ -13,7 +13,7 @@ import zmq
 import traceback
 from python_banyan.banyan_base import BanyanBase
 
-BANYAN_IP="192.168.2.103"#"192.168.178.52"
+BANYAN_IP="192.168.178.59"#"192.168.178.52"
 
 class gateway(BanyanBase):
     """
