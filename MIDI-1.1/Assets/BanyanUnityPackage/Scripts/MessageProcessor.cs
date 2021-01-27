@@ -38,7 +38,7 @@ public class MessageProcessor : MonoBehaviour
             // JoyStickButton = bool.Parse(lastValue);
         }
         else
-            pitch = 64;
+            pitch = 64; //Standart-Wert für Pitch
             
             
 
