@@ -502,10 +502,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Instrument: {fileID: 673870079}
-  hSliderValueR: 0
-  hSliderValueG: 0
-  hSliderValueB: 0
-  hSliderValueA: 1
+  CColor: {r: 0, g: 1, b: 1, a: 1}
+  DColor: {r: 0, g: 0, b: 1, a: 1}
+  EColor: {r: 1, g: 0, b: 0, a: 1}
+  FColor: {r: 1, g: 1, b: 0, a: 1}
+  GColor: {r: 1, g: 0, b: 1, a: 1}
+  AColor: {r: 0, g: 0, b: 0, a: 1}
+  BColor: {r: 1, g: 1, b: 1, a: 1}
+  C1Color: {r: 0.5, g: 1, b: 1, a: 1}
 --- !u!1 &334982605
 GameObject:
   m_ObjectHideFlags: 0
