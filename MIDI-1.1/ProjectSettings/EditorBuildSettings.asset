@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Main.unity
-    guid: a6ad830b81b974dd8a9833813ba88641
-  - enabled: 1
-    path: Assets/MidiPlayer/Demo/FreeDemos/TestMidiStream.unity
-    guid: 7438ff6964cbede408a92dbdfdaddb8f
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

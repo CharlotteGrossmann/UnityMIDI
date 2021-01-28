@@ -313,7 +313,7 @@ namespace MidiPlayerTK
             else if (Input.GetKeyDown(KeyCode.H))
                 keyNote = 51;
             else if (Input.GetKeyDown(KeyCode.J))
-                keyNote = 52;
+                keyNote = 53;
             else if (Input.GetKeyDown(KeyCode.K))
                 keyNote = 54;
             else if(Input.GetKeyUp(KeyCode.A)||Input.GetKeyUp(KeyCode.S)|| Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.F) || Input.GetKeyUp(KeyCode.G) || Input.GetKeyUp(KeyCode.H) || Input.GetKeyUp(KeyCode.J) || Input.GetKeyUp(KeyCode.K))
