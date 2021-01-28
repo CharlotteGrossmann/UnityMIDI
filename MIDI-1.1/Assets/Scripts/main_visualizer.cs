@@ -43,8 +43,22 @@ public class main_visualizer : MonoBehaviour
         var main = ps.main;
 
         if (NoteChange == 54)
-            main.startColor = CColor;
+        {
+            //main.startColor = CColor;
+            // GameObject go1 = new GameObject("go1", typeof(Rigidbody), typeof(BoxCollider));
+            GameObject go = new GameObject("test");
 
+            go.transform.position = new Vector3(0, 1, 0);
+
+            Color objectColor = new Color(1, 0, 0, 1);
+
+            MeshRenderer gameObjectRenderer = go.AddComponent<MeshRenderer>();
+
+            Material newMaterial = new Material(Shader.Find("Diffuse"));
+
+            newMaterial.color = objectColor;
+            gameObjectRenderer.material = newMaterial;
+        }
         else if (NoteChange == 52)
             main.startColor = DColor;
 
@@ -65,7 +79,5 @@ public class main_visualizer : MonoBehaviour
 
         else if (NoteChange == 42)
             main.startColor = C1Color;
-        else
-            main.startColor = new Color(0, 0, Random.Range(0.5f, 1f), 1);
     }
 }
