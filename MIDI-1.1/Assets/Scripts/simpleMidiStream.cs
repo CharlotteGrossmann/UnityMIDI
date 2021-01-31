@@ -19,6 +19,7 @@ namespace MidiPlayerTK
         public float NoteDuration = 0.7f;
 
 
+
         [Range(0, 127)] //lautstärke des Tons
         public int Velocity = 100;
 
@@ -47,6 +48,7 @@ namespace MidiPlayerTK
         /// Current note playing
         /// </summary>
         private MPTKEvent NotePlaying;
+        public bool isPlaying = false;
 
         private float LastTimeChange;
                                                     
@@ -60,7 +62,7 @@ namespace MidiPlayerTK
 
         //get banyan  info
         public GameObject Instrument;
-        private int mySustain;
+        public int mySustain;
 
         //keyboard mode
         public bool banyan_melody = true;
@@ -69,6 +71,8 @@ namespace MidiPlayerTK
 
         private int pastVelocity = 0;
         private int keyNote = -1;
+
+        
 
         private void Awake()                                     
         {
@@ -270,6 +274,7 @@ namespace MidiPlayerTK
         {
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
             // Start playing a new note
+            isPlaying = true;
             NotePlaying = new MPTKEvent()
             {
                 Command = MPTKCommand.NoteOn,                                      //wird getriggert wenn alle Instrumentenkompont aktiv sind
@@ -289,6 +294,7 @@ namespace MidiPlayerTK
         {
             if (NotePlaying != null)
             {
+                isPlaying = false;
                 //Debug.Log("Stop note");
                 // Stop the note (method to simulate a real human on a keyboard : 
                 // duration is not known when note is triggered)

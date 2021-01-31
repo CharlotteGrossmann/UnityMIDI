@@ -18,7 +18,7 @@ public class beats : MonoBehaviour
         
         if (!beatOn)
         {
-            InvokeRepeating("BeatBeats", 2f, 2f);
+            Invoke("BeatBeats", 1f);
             beatOn = true;
         }
       
@@ -29,8 +29,6 @@ public class beats : MonoBehaviour
     {
         if (beatOn)
         {
-
-            //mulitply desired movement by Time.deltaTime to move per second
             if (i != 1)
                 allBeats[i - 1].transform.position = new Vector3(allBeats[i - 1].transform.position.x, allBeats[i-1].transform.position.y - 30f, allBeats[i - 1].transform.position.z);
             if(i==1 && !first)
