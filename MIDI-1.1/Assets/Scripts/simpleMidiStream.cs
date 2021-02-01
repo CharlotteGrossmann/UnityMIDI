@@ -27,7 +27,7 @@ namespace MidiPlayerTK
         int StreamChannel = 0;
 
         [Range(0, 127)]
-        public int CurrentNote;
+        public int CurrentNote = -1;
 
         [Range(0, 127)]
         public int InstrumentSound; //sollte 0 sein für Klavier
@@ -48,7 +48,7 @@ namespace MidiPlayerTK
         /// Current note playing
         /// </summary>
         private MPTKEvent NotePlaying;
-        public bool isPlaying = false;
+        public bool isActive = false;
 
         private float LastTimeChange;
                                                     
@@ -71,7 +71,7 @@ namespace MidiPlayerTK
 
         private int pastVelocity = 0;
         private int keyNote = -1;
-
+        public bool newNote = true;
         
 
         private void Awake()                                     
@@ -205,6 +205,18 @@ namespace MidiPlayerTK
                     Channel = StreamChannel,
                 });
 
+                if (Velocity !=0  && CurrentNote != -1 && (PitchChange !=64 /*|| mySustain != 0*/))//only play if all components are active
+                {
+                    isActive = true;
+                    if (newNote)//if (pastVelocity != Velocity)
+                    {
+                        Play(false);
+                        newNote = false;
+                    }
+                       
+                }
+                else
+                    isActive = false;
 
                 //melody simulation
                 if (banyan_melody)
@@ -221,16 +233,17 @@ namespace MidiPlayerTK
                         Velocity = 40;
                     if (Velocity >= 127)
                         Velocity = 127;
-                    if (pastVelocity != Velocity)
-                        Play(false);
+                    if (Velocity == 0)
+                        newNote = true;
+                   
                 }
                 else if (!banyan_rhythm)
                 {
-                    if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-                        Play(false);
+                    if (Input.GetKeyDown(KeyCode.Space))
+                        Velocity = 100;
 
                     if (Input.GetKeyUp(KeyCode.Return))
-                        StopOneNote();
+                        Velocity = 0;
                 }
 
                 //modulation simulation
@@ -274,7 +287,6 @@ namespace MidiPlayerTK
         {
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
             // Start playing a new note
-            isPlaying = true;
             NotePlaying = new MPTKEvent()
             {
                 Command = MPTKCommand.NoteOn,                                      //wird getriggert wenn alle Instrumentenkompont aktiv sind
@@ -294,7 +306,6 @@ namespace MidiPlayerTK
         {
             if (NotePlaying != null)
             {
-                isPlaying = false;
                 //Debug.Log("Stop note");
                 // Stop the note (method to simulate a real human on a keyboard : 
                 // duration is not known when note is triggered)

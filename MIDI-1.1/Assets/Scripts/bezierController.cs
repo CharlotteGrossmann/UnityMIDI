@@ -11,14 +11,17 @@ public class bezierController : MonoBehaviour
     private Transform[] notePoints; //only the points that are affected by melody component
 
     public GameObject MidiMaker;
-    public float velocity;
-    public int playedNote;
+    private float velocity;
+    private int playedMidiNote;
     private float sustain;
     private float pitch;
+    private bool isPlaying;
 
     private float velocityMove;
     private Vector3 defaultPosition;
-    public float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
+    private float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
+    private bool isVisualized = false;
+    private float pitchDifference = 0;
 
     void Start()
     {
@@ -32,16 +35,26 @@ public class bezierController : MonoBehaviour
     void Update()
     {
         velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
-        playedNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
+        playedMidiNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
         sustain = MidiMaker.GetComponent<simpleMidiStream>().mySustain;
         pitch = MidiMaker.GetComponent<simpleMidiStream>().PitchChange;
+        isPlaying = MidiMaker.GetComponent<simpleMidiStream>().isActive;
 
         velocityToWaves();
         notesToAmplitute();
         sustainToViz();
         pitchToViz();
         setPosition();
-
+        /*if ((pitch != 64||sustain != 0) && playedMidiNote > 0 && velocity > 0)
+            createVisualNote();
+        
+        else
+            isVisualized = false;*/
+        if (isPlaying)
+            createVisualNote();
+        else
+            isVisualized = false;
+        
     }
 
     void velocityToWaves()
@@ -57,36 +70,7 @@ public class bezierController : MonoBehaviour
         for(var i = 0; i<8; i++)
         {
             melodyDifference[i] = 0; //sets everything wave amplitude to 0
-
-            switch (playedNote) //sets the respective wave higher
-            {
-                case 42:
-                    melodyDifference[0] = amplitude;
-                    break;
-                case 44:
-                    melodyDifference[1] = amplitude;
-                    break;
-                case 46:
-                    melodyDifference[2] = amplitude;
-                    break;
-                case 47:
-                    melodyDifference[3] = amplitude;
-                    break;
-                case 49:
-                    melodyDifference[4] = amplitude;
-                    break;
-                case 51:
-                    melodyDifference[5] = amplitude;
-                    break;
-                case 53:
-                    melodyDifference[6] = amplitude;
-                    break;
-                case 54:
-                    melodyDifference[7] = amplitude;
-                    break;
-                default:
-                    break;
-            }
+            melodyDifference[noteIndex()] = amplitude;
         }
 
     }
@@ -97,7 +81,13 @@ public class bezierController : MonoBehaviour
     }
     void pitchToViz()
     {
-        //pitch;
+        /*
+        if (pitch < 64)
+            pitchDifference = -(pitch / 10f);
+        else if (pitch > 64)
+            pitchDifference = pitch / 10;
+        else
+            pitchDifference = 0;*/
     }
     
     // schlauer lösen
@@ -105,10 +95,46 @@ public class bezierController : MonoBehaviour
     {
         for (var i = 0; i<notePoints.Length; i++)
         {
-            notePoints[i].transform.position = new Vector3(notePoints[i].transform.position.x, defaultPosition.y + velocityMove + melodyDifference[i], notePoints[i].transform.position.z);
+            notePoints[i].transform.position = new Vector3(notePoints[i].transform.position.x + pitchDifference, defaultPosition.y + velocityMove + melodyDifference[i], notePoints[i].transform.position.z);
 
         }
     }
 
+    private int noteIndex()
+    {
+        switch (playedMidiNote) //sets the respective wave higher
+        {
+            case 42:
+                return 0;
+            case 44:
+                return 1;
+            case 46:
+                return 2;
+            case 47:
+                return 3;
+            case 49:
+                return 4;
+            case 51:
+                return 5;
+            case 53:
+                return 6;
+            case 54:
+                return 7;
+            default:
+                return -1;
+        }
+    }
+
+    void createVisualNote()
+    {
+        if (!isVisualized) {  //creates a sphere at the tip of the highest wave when all components are active
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.transform.position = notePoints[noteIndex()].transform.position;
+            sphere.transform.localScale = new Vector3(30, 30, 30);
+            sphere.AddComponent<noteFloater>();
+            isVisualized = true;
+        }
+
+    }
 }
 
