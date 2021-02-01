@@ -26,7 +26,7 @@ namespace MidiPlayerTK
         [Range(0, 16)]
         int StreamChannel = 0;
 
-        [Range(0, 127)]
+        [Range(-1, 127)]
         public int CurrentNote = -1;
 
         [Range(0, 127)]

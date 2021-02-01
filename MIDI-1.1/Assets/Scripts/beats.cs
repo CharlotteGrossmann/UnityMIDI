@@ -4,32 +4,54 @@ using UnityEngine;
 
 public class beats : MonoBehaviour
 {
-    private Transform[] allBeats;
-    private int i = 1;
+    public Transform[] allBeats;
+    private int i = 2;
     private bool beatOn = false;
     private bool first = true;
     private int lastBeat;
+    private int lastMeassure;
+    public Transform meassure;
+    private Vector3 lastBeatPosition;
+    private Vector3 spawnPoint;
+    private Transform clone;
+    public Transform BeatIndicator;
+    public Vector3 lastMeassurePosition;
+    private float movement;
+    private bool newBeat = false;
     void Start()
     {
         allBeats = GetComponentsInChildren<Transform>();
         lastBeat = allBeats.Length - 1;
+        lastMeassure = allBeats.Length - 5;
+        lastBeatPosition = allBeats[lastBeat].position;
+        spawnPoint = new Vector3(lastBeatPosition.x + 80f , lastBeatPosition.y, lastBeatPosition.z);
 
-        
+        lastMeassurePosition = allBeats[11].transform.position;
+
     }
 
     void Update()
     {
-
+        allBeats = GetComponentsInChildren<Transform>(); //array length differs so we have to update it
+        
+        moveBeats();
         if (!beatOn)
         {
-            Invoke("BeatBeats", 0.48f); //invoke the beat function every 0,49 seconds (in time with beat of the background music)
+            
+            Invoke("indicateBeats", 0.48f); //invoke the beat function every 0,49 seconds (in time with beat of the background music)
             beatOn = true;
         }
+        /* if (!newBeat)
+
+             Invoke("buildBeats", 1f);
+             newBeat = false;
+         }*/
+        buildBeats();
 
 
     }
 
-    void BeatBeats()
+    void indicateBeats()
     {
         if (beatOn)
         {
@@ -43,13 +65,48 @@ public class beats : MonoBehaviour
             if(i<allBeats.Length)
                 i+=1;
             if (i == allBeats.Length)
-                i = 1;
+                i = 2;
+            if (i == 1 || i == 6 || i == 11 || i == 16)
+                i += 1;
             first = false;
             beatOn = false;
+           
+        }
+
+
+    }
+
+    void buildBeats()
+    {
+        /*if (newBeat)
+        {*/
+        if (allBeats[lastMeassure].position.x < 700 && allBeats[lastMeassure].position.x > 650 )
+        {
+            if (newBeat)
+            {
+                clone = Instantiate(meassure, spawnPoint, Quaternion.identity);
+                clone.transform.SetParent(BeatIndicator.transform);
+                newBeat = false;
+            }
             
         }
+        else
+            newBeat = true;
+           /* newBeat = false;
+        }*/
         
+    }
 
+    void moveBeats()
+    {
+        movement -= 0.5f * Time.deltaTime; //times time.deltaTime to apply per second not frame
+        for(var j = 1; j < allBeats.Length; j += 5)
+        {
+            allBeats[j].position = new Vector3(allBeats[j].position.x + movement, allBeats[j].position.y , allBeats[j].position.z); //let all beats float upwards
+            if (allBeats[j].transform.position.x < -602)//destory if meassure is out of camera view
+                Destroy(allBeats[j].gameObject); //destroy object when it's not in the camera view anymore
+        }
+        
     }
 }
 

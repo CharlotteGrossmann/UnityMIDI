@@ -4,7 +4,6 @@ using UnityEngine;
 using BezierSolution;
 using MidiPlayerTK;
 using System;
-using System.Linq;
 
 public class bezierController : MonoBehaviour
 {
@@ -19,19 +18,28 @@ public class bezierController : MonoBehaviour
 
     private float velocityMove;
     private Vector3 defaultPosition;
-    private float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
+    private Vector3 defaultPosition1;
+    public float defaultGap;
+    public float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
     private bool isVisualized = false;
-    private float pitchDifference = 0;
+    private float pitchDifference;
+
 
     void Start()
     {
+       
+
         var allPoints = GetComponentsInChildren<Transform>(); //get all spline points
         notePoints = new Transform[] { allPoints[2], allPoints[4], allPoints[6], allPoints[8], allPoints[10], allPoints[12], allPoints[14], allPoints[16]};
         
-        defaultPosition = allPoints[2].transform.position; //the y position for each point is the same, so we can get it from allPoints[2] and use it for every one 
+        defaultPosition = notePoints[0].transform.position; //position of the first point that corresponds to a note
+        defaultPosition1 = notePoints[1].transform.position; //position of the second point that corresponds to a note
+        defaultGap = -(defaultPosition.x - defaultPosition1.x); //calculate how big the gap is between notePoints
+
+
     }
-    
- 
+
+
     void Update()
     {
         velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
@@ -45,11 +53,7 @@ public class bezierController : MonoBehaviour
         sustainToViz();
         pitchToViz();
         setPosition();
-        /*if ((pitch != 64||sustain != 0) && playedMidiNote > 0 && velocity > 0)
-            createVisualNote();
-        
-        else
-            isVisualized = false;*/
+       
         if (isPlaying)
             createVisualNote();
         else
@@ -70,7 +74,8 @@ public class bezierController : MonoBehaviour
         for(var i = 0; i<8; i++)
         {
             melodyDifference[i] = 0; //sets everything wave amplitude to 0
-            melodyDifference[noteIndex()] = amplitude;
+            if(noteIndex()!=-1)
+                melodyDifference[noteIndex()] = amplitude;
         }
 
     }
@@ -81,22 +86,17 @@ public class bezierController : MonoBehaviour
     }
     void pitchToViz()
     {
-        /*
-        if (pitch < 64)
-            pitchDifference = -(pitch / 10f);
-        else if (pitch > 64)
-            pitchDifference = pitch / 10;
-        else
-            pitchDifference = 0;*/
+            pitchDifference = -((64 - pitch) / 100)*40f; //translates pitch to deviancy on x-axis. Times 40 to scale it up to a visible difference
     }
     
-    // schlauer lösen
     void setPosition() //calculate the position of all note points 
     {
         for (var i = 0; i<notePoints.Length; i++)
         {
-            notePoints[i].transform.position = new Vector3(notePoints[i].transform.position.x + pitchDifference, defaultPosition.y + velocityMove + melodyDifference[i], notePoints[i].transform.position.z);
-
+            var x = (defaultPosition.x + defaultGap * i) + pitchDifference; 
+            var y = defaultPosition.y + velocityMove + melodyDifference[i];
+            var z = notePoints[i].transform.position.z;
+            notePoints[i].transform.position = new Vector3(x, y, z);
         }
     }
 
@@ -127,7 +127,7 @@ public class bezierController : MonoBehaviour
 
     void createVisualNote()
     {
-        if (!isVisualized) {  //creates a sphere at the tip of the highest wave when all components are active
+        if (!isVisualized&&noteIndex()!=-1) {  //creates a sphere at the tip of the highest wave when all components are active
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = notePoints[noteIndex()].transform.position;
             sphere.transform.localScale = new Vector3(30, 30, 30);

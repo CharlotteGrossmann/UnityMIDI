@@ -13,6 +13,8 @@ public class MessageProcessor : MonoBehaviour
     private string lastValue;
     public int pressure;
     public int note;
+    public int flutePressure;
+    public int fluteNote;
     public int pitch = 64;
     public int sustain;
     public bool JoyStickButton;
@@ -27,18 +29,33 @@ public class MessageProcessor : MonoBehaviour
     }
     void Update()
     {
-        if (component == "KeyboardRhythm")
-            pressure = sensorValue;
-        else if (component == "KeyboardMelody")
-            note = sensorValue;
-            
-        else if (component == "modulate")
+        switch (component)
         {
-            pitch = sensorValue;
-            sustain = int.Parse(secondaryValue);
-            // JoyStickButton = bool.Parse(lastValue);
+            case "KeyboardRhythm":
+                pressure = sensorValue;
+                break;
+            case "KeyboardMelody":
+                note = sensorValue;
+                break;
+            case "FluteRhythm":
+                flutePressure = sensorValue;
+                break;
+            case "FluteMelody":
+                fluteNote = sensorValue;
+                break;
+            case "modulate":
+                pitch = sensorValue;
+                sustain = int.Parse(secondaryValue);
+                // JoyStickButton = bool.Parse(lastValue);
+                break;
+            case "sustain":
+                break;
+            default:
+                pitch = 500; //default sensor value for joystick translates to defualt pitch of 64 in simpleMidiStream.cs
+                break;
+
+
         }
-        else
-            pitch = 500; //Standart-Wert für Pitch
+       
     }   
 }

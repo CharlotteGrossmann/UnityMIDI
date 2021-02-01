@@ -1,37 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MidiPlayerTK;
 
 public class activityIndicator : MonoBehaviour
 {
-    public GameObject Instrument; //Import MessageProcessor.cs
     public MeshRenderer MelodyIndicator;
     public MeshRenderer RhythmIndicator;
     public MeshRenderer ModulateIndicator;
 
-    public int PitchChange; //Modulation der Tonhöhe -> Joystick
-    public int SustainChange; //Modulation des Klangs -> Joystick
-    public int NoteChange; //Melodie -> Buttons
-    private int PressureChange; //Rythmus -> Force Sensitive Resistor
-   
+    public GameObject MidiMaker;
+    private float velocity;
+    private int playedMidiNote;
+    private float sustain;
+    private float pitch;
+    private bool isPlaying;
+
     void Update()
     {
-        PitchChange = Instrument.GetComponent<MessageProcessor>().pitch;
-        PressureChange = Instrument.GetComponent<MessageProcessor>().pressure;
-        NoteChange = Instrument.GetComponent<MessageProcessor>().note;
-        SustainChange = Instrument.GetComponent<MessageProcessor>().sustain;
+        velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
+        playedMidiNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
+        sustain = MidiMaker.GetComponent<simpleMidiStream>().mySustain;
+        pitch = MidiMaker.GetComponent<simpleMidiStream>().PitchChange;
+        isPlaying = MidiMaker.GetComponent<simpleMidiStream>().isActive;
 
-        if (NoteChange != -1) 
+        if (playedMidiNote > 0) 
             MelodyIndicator.enabled = true;
         else
             MelodyIndicator.enabled = false;
 
-        if (PressureChange != 0)            
+        if (velocity != 0)            
             RhythmIndicator.enabled = true;
         else
             RhythmIndicator.enabled = false;
 
-        if (/*SustainChange != 500||*/PitchChange != 500) 
+        if (/*sustain != 500||*/pitch != 64) 
             ModulateIndicator.enabled = true;
         else
             ModulateIndicator.enabled = false;

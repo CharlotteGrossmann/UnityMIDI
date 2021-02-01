@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//when a new note spawns this script gets attached and makes the note float up until its out of the cameras view
 public class noteFloater : MonoBehaviour
 {
 
