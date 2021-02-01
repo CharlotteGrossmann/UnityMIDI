@@ -27,9 +27,9 @@ public class MessageProcessor : MonoBehaviour
     }
     void Update()
     {
-        if (component == "rhythm")
+        if (component == "KeyboardRhythm")
             pressure = sensorValue;
-        else if (component == "melody")
+        else if (component == "KeyboardMelody")
             note = sensorValue;
             
         else if (component == "modulate")
