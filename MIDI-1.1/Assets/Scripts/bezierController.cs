@@ -9,13 +9,14 @@ public class bezierController : MonoBehaviour
 {
     private Transform[] notePoints; //only the points that are affected by melody component
 
+    //imported variables
     public GameObject MidiMaker;
     private float velocity;
     private int playedMidiNote;
-    private float sustain;
     private float pitch;
     private bool isPlaying;
 
+    
     private float velocityMove;
     private Vector3 defaultPosition;
     private Vector3 defaultPosition1;
@@ -23,6 +24,7 @@ public class bezierController : MonoBehaviour
     public float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
     private bool isVisualized = false;
     private float pitchDifference;
+    private float pitchMove;
 
 
     void Start()
@@ -44,13 +46,11 @@ public class bezierController : MonoBehaviour
     {
         velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
         playedMidiNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
-        sustain = MidiMaker.GetComponent<simpleMidiStream>().mySustain;
         pitch = MidiMaker.GetComponent<simpleMidiStream>().PitchChange;
         isPlaying = MidiMaker.GetComponent<simpleMidiStream>().isActive;
 
         velocityToWaves();
         notesToAmplitute();
-        sustainToViz();
         pitchToViz();
         setPosition();
        
@@ -80,13 +80,13 @@ public class bezierController : MonoBehaviour
 
     }
 
-    void sustainToViz()
-    {
-        //sustain;
-    }
     void pitchToViz()
     {
             pitchDifference = -((64 - pitch) / 100)*40f; //translates pitch to deviancy on x-axis. Times 40 to scale it up to a visible difference
+            if (pitchDifference != 0)
+                pitchMove = 20f;
+            else
+                pitchMove = 0;
     }
     
     void setPosition() //calculate the position of all note points 
@@ -94,7 +94,7 @@ public class bezierController : MonoBehaviour
         for (var i = 0; i<notePoints.Length; i++)
         {
             var x = (defaultPosition.x + defaultGap * i) + pitchDifference; 
-            var y = defaultPosition.y + velocityMove + melodyDifference[i];
+            var y = defaultPosition.y + velocityMove + pitchMove + melodyDifference[i];
             var z = notePoints[i].transform.position.z;
             notePoints[i].transform.position = new Vector3(x, y, z);
         }
