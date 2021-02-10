@@ -17,7 +17,7 @@ public class MessageProcessor : MonoBehaviour
     public int fluteNote;
     public int pitch = 64;
     public int sustain;
-    public bool JoyStickButton;
+    public bool joyStickButton;
 
     public void DoAction(string action, string info, int value, string target)
     {

@@ -5,38 +5,47 @@ using BezierSolution;
 using MidiPlayerTK;
 using System;
 
-public class bezierController : MonoBehaviour
+public class BezierController : MonoBehaviour
 {
-    private Transform[] notePoints; //only the points that are affected by melody component
+   //imported variables
+    public GameObject midiMaker;
 
-    //imported variables
-    public GameObject MidiMaker;
-    private float velocity;
-    private int playedMidiNote;
     private float pitch;
+    private float velocity;
+
+    private int playedMidiNote;
+    
     private bool isPlaying;
 
-    
-    private float velocityMove;
+    //only the points from the spline that are affected by melody component
+    private Transform[] notePoints; //keep in mind! notePoits[0] is not the first beat but the parent object
+
+
+
     private Vector3 defaultPosition;
     private Vector3 defaultPosition1;
+
+    private float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
     public float defaultGap;
-    public float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
-    private bool isVisualized = false;
+    private float velocityMove;
     private float pitchDifference;
     private float pitchMove;
+
+    private bool isVisualized = false;
+    
 
 
     void Start()
     {
-       
 
-        var allPoints = GetComponentsInChildren<Transform>(); //get all spline points
+        //get all spline points and push the moveable ones into notePoints[]
+        var allPoints = GetComponentsInChildren<Transform>(); 
         notePoints = new Transform[] { allPoints[2], allPoints[4], allPoints[6], allPoints[8], allPoints[10], allPoints[12], allPoints[14], allPoints[16]};
-        
-        defaultPosition = notePoints[0].transform.position; //position of the first point that corresponds to a note
-        defaultPosition1 = notePoints[1].transform.position; //position of the second point that corresponds to a note
-        defaultGap = -(defaultPosition.x - defaultPosition1.x); //calculate how big the gap is between notePoints
+
+        //calculate how big the gap is between two notePoints
+        defaultPosition = notePoints[0].transform.position; 
+        defaultPosition1 = notePoints[1].transform.position; 
+        defaultGap = -(defaultPosition.x - defaultPosition1.x); 
 
 
     }
@@ -44,65 +53,76 @@ public class bezierController : MonoBehaviour
 
     void Update()
     {
-        velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
-        playedMidiNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
-        pitch = MidiMaker.GetComponent<simpleMidiStream>().PitchChange;
-        isPlaying = MidiMaker.GetComponent<simpleMidiStream>().isActive;
+        //get component activty from MidiStream
+        velocity = midiMaker.GetComponent<SimpleMidiStream>().velocity;
+        playedMidiNote = midiMaker.GetComponent<SimpleMidiStream>().currentNote;
+        pitch = midiMaker.GetComponent<SimpleMidiStream>().pitchChange;
+        isPlaying = midiMaker.GetComponent<SimpleMidiStream>().isActive;
 
-        velocityToWaves();
-        notesToAmplitute();
-        pitchToViz();
-        setPosition();
+        VelocityToWaves();
+        NotesToAmplitute();
+        PitchToViz();
+        SetPosition();
        
         if (isPlaying)
-            createVisualNote();
-        else
-            isVisualized = false;
+            CreateVisualNote();
+        else //Make sure only one note is created
+            isVisualized = false; 
         
     }
 
-    void velocityToWaves()
+    void VelocityToWaves() //velocity directly translates to the amplitutes
     {
         velocityMove = velocity / 3f;
 
     }
 
-    void notesToAmplitute()
+    void NotesToAmplitute()
     {
         var amplitude = 50f; //how much the amplitude of the respective wave should be risen
 
-        for(var i = 0; i<8; i++)
+        for(var i = 0; i<8; i++)//set every notePoint to default position
         {
-            melodyDifference[i] = 0; //sets everything wave amplitude to 0
-            if(noteIndex()!=-1)
-                melodyDifference[noteIndex()] = amplitude;
+            melodyDifference[i] = 0; 
+
+            if(NoteIndex()!=-1)
+                melodyDifference[NoteIndex()] = amplitude; //set active notePoint to higher position
         }
 
     }
 
-    void pitchToViz()
+    void PitchToViz()
     {
-            pitchDifference = -((64 - pitch) / 100)*40f; //translates pitch to deviancy on x-axis. Times 40 to scale it up to a visible difference
+            //translates pitch to deviancy on x-axis from the default position. 
+            //Times 40 to scale it up to a visible difference
+            pitchDifference = -((64 - pitch) / 100)*40f; 
+            
             if (pitchDifference != 0)
                 pitchMove = 20f;
             else
                 pitchMove = 0;
     }
     
-    void setPosition() //calculate the position of all note points 
+    void SetPosition() //calculate the position of all note points 
     {
         for (var i = 0; i<notePoints.Length; i++)
         {
+            //X takes into account the deviancy created by differences in Pitch
             var x = (defaultPosition.x + defaultGap * i) + pitchDifference; 
+
+            //Y takes into account the pitch, velocity and melody 
             var y = defaultPosition.y + velocityMove + pitchMove + melodyDifference[i];
+
+            //Z stays the same always
             var z = notePoints[i].transform.position.z;
+
             notePoints[i].transform.position = new Vector3(x, y, z);
         }
     }
 
-    private int noteIndex()
+    private int NoteIndex()
     {
-        switch (playedMidiNote) //sets the respective wave higher
+        switch (playedMidiNote) //translate Midi Note to notePoint Index
         {
             case 42:
                 return 0;
@@ -125,13 +145,15 @@ public class bezierController : MonoBehaviour
         }
     }
 
-    void createVisualNote()
+    void CreateVisualNote()
     {
-        if (!isVisualized&&noteIndex()!=-1) {  //creates a sphere at the tip of the highest wave when all components are active
+        if (!isVisualized&&NoteIndex()!=-1) {  //creates a sphere at the tip of the highest wave when all components are active
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.position = notePoints[noteIndex()].transform.position;
+            sphere.transform.position = notePoints[NoteIndex()].transform.position;
             sphere.transform.localScale = new Vector3(30, 30, 30);
-            sphere.AddComponent<noteFloater>();
+
+            //adds NoteFloater script so it floats upwards
+            sphere.AddComponent<NoteFloater>();
             isVisualized = true;
         }
 

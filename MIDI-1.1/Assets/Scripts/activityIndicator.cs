@@ -3,41 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using MidiPlayerTK;
 
-public class activityIndicator : MonoBehaviour
+public class ActivityIndicator : MonoBehaviour
 {
-    public MeshRenderer MelodyIndicator;
-    public MeshRenderer RhythmIndicator;
-    public MeshRenderer ModulateIndicator;
+    //assign in Unity
+    public MeshRenderer melodyIndicator;
+    public MeshRenderer rhythmIndicator;
+    public MeshRenderer modulateIndicator;
+    public GameObject midiMaker;
 
-    public GameObject MidiMaker;
+    //components
     private float velocity;
     private int playedMidiNote;
     private float sustain;
     private float pitch;
-    private bool isPlaying;
 
     void Update()
     {
-        velocity = MidiMaker.GetComponent<simpleMidiStream>().Velocity;
-        playedMidiNote = MidiMaker.GetComponent<simpleMidiStream>().CurrentNote;
-        sustain = MidiMaker.GetComponent<simpleMidiStream>().mySustain;
-        pitch = MidiMaker.GetComponent<simpleMidiStream>().PitchChange;
-        isPlaying = MidiMaker.GetComponent<simpleMidiStream>().isActive;
+        //get component activity from MidiStream
+        velocity = midiMaker.GetComponent<SimpleMidiStream>().velocity;
+        playedMidiNote = midiMaker.GetComponent<SimpleMidiStream>().currentNote;
+        sustain = midiMaker.GetComponent<SimpleMidiStream>().mySustain;
+        pitch = midiMaker.GetComponent<SimpleMidiStream>().pitchChange;
 
+        //logic to activate/deactivate Indicators
         if (playedMidiNote > 0) 
-            MelodyIndicator.enabled = true;
+            melodyIndicator.enabled = true;
         else
-            MelodyIndicator.enabled = false;
+            melodyIndicator.enabled = false;
 
         if (velocity != 0)            
-            RhythmIndicator.enabled = true;
+            rhythmIndicator.enabled = true;
         else
-            RhythmIndicator.enabled = false;
+            rhythmIndicator.enabled = false;
 
         if (/*sustain != 500||*/pitch != 64) 
-            ModulateIndicator.enabled = true;
+            modulateIndicator.enabled = true;
         else
-            ModulateIndicator.enabled = false;
+            modulateIndicator.enabled = false;
 
 
     }
