@@ -4,104 +4,77 @@ using UnityEngine;
 
 public class MainVisualizer : MonoBehaviour
 {
-    public GameObject Instrument; //Import MessageProcessor.cs
 
-    private int pitchChange; //Modulation der Tonhöhe -> Joystick
-    private int sustainChange; //Modulation des Klangs -> Joystick
-    private int noteChange; //Melodie -> Buttons
-    private int pressureChange; //Rythmus -> Force Sensitive Resistor
+    public Transform visualNote; //note prefab
+    private Transform clone;    //cloned object
+    private Color startColor;
+    public Vector3 spawnPosition;
+    public GameObject midiStream;
+
+    public Transform mainView; //parent object
 
     private ParticleSystem ps;
-    //Jeder Note eine Farbe zuordnen (R,G,B,Alpha):
-    public Color CColor = new Color(0, 1, 1, 1);
-    public Color DColor = new Color(0, 0, 1, 1);
-    public Color EColor = new Color(1, 0, 0, 1);
-    public Color FColor = new Color(1, 1, 0, 1);
-    public Color GColor = new Color(1, 0, 1, 1);
-    public Color AColor = new Color(0, 0, 0, 1);
-    public Color BColor = new Color(1, 1, 1, 1);
-    public Color C1Color = new Color(0.5f, 1, 1, 1);
+    
 
-    public bool isActiveButton = false;
+    private float oppacity = 1;
+
+    //rgba
+    public Color woodwindColor;
+    public Color stringsColor;
+    public Color keyboardColor;
+
 
     // Start is called before the first frame update
     void Start()
     {
         ps = GetComponent<ParticleSystem>();
+        startColor = visualNote.GetComponent<SpriteRenderer>().color;
+        spawnPosition = visualNote.position;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        woodwindColor = new Color (191, 245, 186, oppacity);
+        stringsColor = new Color(8, 255, 82, oppacity);
+        keyboardColor = new Color(188, 219, 238, oppacity);
 
-        //Variablen zuordnen zu Variablen aus MessageProcessor.cs
-        pitchChange = Instrument.GetComponent<MessageProcessor>().pitch;
-        pressureChange = Instrument.GetComponent<MessageProcessor>().pressure;
-        noteChange = Instrument.GetComponent<MessageProcessor>().note;
-        sustainChange = Instrument.GetComponent<MessageProcessor>().sustain;
+        spawnPosition.x += Random.Range(100, 101);
 
-        //ps = particle system
-        var main = ps.main;
-
-        if (noteChange == 54 && !isActiveButton)
-        {
-            isActiveButton = true;
-            NewGameObjectCube(); //Aufruf Funktion
-        }
-        else if (noteChange == 53 && !isActiveButton)
-        {
-            isActiveButton = true;
-            NewGameObjectSphere(); //Aufruf Funktion
-        }
-        else if (noteChange == 51)
-            main.startColor = EColor;
-
-        else if (noteChange == 49)
-            main.startColor = FColor;
-
-        else if (noteChange == 47)
-            main.startColor = GColor;
-
-        else if (noteChange == 46)
-            main.startColor = AColor;
-
-        else if (noteChange == 44)
-            main.startColor = BColor;
-
-        else if (noteChange == 42)
-            main.startColor = C1Color;
-
-        else if (noteChange == -1) {
-            isActiveButton = false;
-        }
+        
     }
 
-    void NewGameObjectCube()
-    {
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        go.transform.position = new Vector3(0, 1, 0);
+   
 
-        MeshRenderer gameObjectRenderer = go.AddComponent<MeshRenderer>();
+    public void NewNote(float velocity, string instrument)
+    { 
+        //define look
+        switch (instrument)   //color = instrument
+        {
+            case "Woodwind":
+                startColor = woodwindColor;
+                break;
+            case "String":
+                startColor = stringsColor;
+                break;
+            case "Keyboard":
+                startColor = keyboardColor;
+                break;
+            default:
+                break;
+        }
+        //brightness = frequenc
 
-        Material newMaterial = new Material(Shader.Find("Diffuse"));
+        //oppacity = volume
+        oppacity = velocity/127;//velocity is 0-127, oppacity smaller than 128 is not visible, so min of opaccity is 128 max is 255
 
-        Color objectColor = CColor;
-        newMaterial.color = objectColor;
-        gameObjectRenderer.material = newMaterial;
-        return;
-    }
+        clone = Instantiate(visualNote, spawnPosition, Quaternion.identity); //create new note
+        clone.transform.SetParent(mainView.transform);
+        //adds Lifetime script so it floats upwards
+        
+        clone.gameObject.AddComponent<Lifetime>();
+        //clone.GetComponent<Lifetime>().midiStream = midiStream;
 
-    void NewGameObjectSphere()
-    {
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        go.transform.position = new Vector3(0, 1, 0);
-
-        MeshRenderer gameObjectRenderer = go.AddComponent<MeshRenderer>();
-
-        Material newMaterial = new Material(Shader.Find("Diffuse"));
-
-        Color objectColor = CColor;
-        newMaterial.color = objectColor;
-        gameObjectRenderer.material = newMaterial;
     }
 }

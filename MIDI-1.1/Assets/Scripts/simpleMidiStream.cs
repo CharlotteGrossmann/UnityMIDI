@@ -8,7 +8,7 @@ using System;
 
 namespace MidiPlayerTK
 {
-    //this is the SIMPLE MidiStream, because it it's based on the MidiStreamPlayer.cs that comes with the Midi Tool Kit Free Plugin
+    //this is the SIMPLE MidiStream, because it it's based on the MidiStream.cs that comes with the Midi Tool Kit Free Plugin
     public class SimpleMidiStream : MonoBehaviour
     {
         // MPTK component able to play a stream of midi events
@@ -28,7 +28,7 @@ namespace MidiPlayerTK
         
 
         //the instrument sound to simulate
-        private int instrumentSound = 0; 
+        public int instrumentSound = 0; 
 
         //Volume of the sound
         [Range(0, 127)] 
@@ -46,11 +46,17 @@ namespace MidiPlayerTK
                                                    
         //get banyan info
         public GameObject instrument;
-        public int mySustain;
+        public int vibrato;
 
         private int pastVelocity = 0;
         public bool newNote = true;
-        
+
+
+
+        //
+        public GameObject mainView;
+        public string instrumentName;
+        public int midiID = 0;
 
         private void Awake()                                     
         {
@@ -130,6 +136,7 @@ namespace MidiPlayerTK
             //create notes here!!!
             if (midiStreamPlayer != null)
             {
+
                 //update midi variables if necessary
                 midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent()
                 {
@@ -138,65 +145,76 @@ namespace MidiPlayerTK
                     Channel = streamChannel,
                 });
 
-                //only play if all components are active
-                if (velocity !=0  && currentNote != -1 && (pitchChange !=64 /*|| mySustain != 0*/))
-                {
-                    isActive = true;
-                    if (newNote)//if (pastVelocity != Velocity)
-                    {
-                        Play(false);
-                        newNote = false;
-                    }
-                }
-                else
-                    isActive = false;
 
-                currentNote = instrument.GetComponent<MessageProcessor>().note;
+                //update the note according to banyan message
+                currentNote = instrument.GetComponent<MessageProcessor>().stringNote;
               
 
                 //manipulate velocity
-                velocity = instrument.GetComponent<MessageProcessor>().pressure;
+                velocity = instrument.GetComponent<MessageProcessor>().stringVolume;
+
                 if (velocity <= 40 && velocity>0)
                     velocity = 40;
+
                 if (velocity >= 127)
                     velocity = 127;
+
                 if (velocity == 0)
+                {
+                    StopOneNote(midiID); //not sure if this is stopping the rights notes
                     newNote = true;
+                }
                    
                 
 
                 //manipulate pitch
-                var sensorPitch = instrument.GetComponent<MessageProcessor>().pitch;
+                var sensorPitch = instrument.GetComponent<MessageProcessor>().stringPitch;
                 if (sensorPitch == 500)
                     pitchChange = DEFAULT_PITCH;
                 else
-                {
                     pitchChange = sensorPitch / 10;
-                }
-                mySustain = instrument.GetComponent<MessageProcessor>().sustain;
-                /*if (sustain == 500)
-                    //print("defualt sustain");
-                else*/
-                      
-              
+                
+                vibrato = instrument.GetComponent<MessageProcessor>().stringVibrato;
+                
+                               
             }
+
+            //only play if all components are active
+            if (velocity != 0 && currentNote != -1 && (pitchChange != 64))
+            {
+                isActive = true;
+                if (newNote)
+                {
+                    midiID += 1;
+                    Play(false);
+                    //visualizes in main view
+                    mainView.GetComponent<MainVisualizer>().NewNote(velocity, instrumentName);
+                    newNote = false;
+                }
+            }
+            else
+                isActive = false;
+
 
             pastVelocity = velocity;
 
         }
         
-        //has to be called actually play the note
+        //is called this way so the computer knows which note to stop
         void Play(bool stopCurrent)
         {        
             if (stopCurrent)
-                StopOneNote();
-            PlayOneNote();
+                StopOneNote(midiID);
+            PlayOneNote(midiID);
             
         }
 
         //has to be called to compose the note
-        private void PlayOneNote()
+        private void PlayOneNote(int midiID)
         {
+
+            //tell lifetime that note is playing
+
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
             // Start playing a new note
             notePlaying = new MPTKEvent()
@@ -214,10 +232,12 @@ namespace MidiPlayerTK
       
       
         //has to be called to stop the note after playing
-        private void StopOneNote()                             
+        private void StopOneNote(int midiID)                             
         {
             if (notePlaying != null)
             {
+                //tell lifetime that the midi note is stoped
+
                 //Debug.Log("Stop note");
                 // Stop the note (method to simulate a real human on a keyboard : 
                 // duration is not known when note is triggered)

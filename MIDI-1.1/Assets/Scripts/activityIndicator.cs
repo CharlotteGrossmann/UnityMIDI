@@ -14,7 +14,6 @@ public class ActivityIndicator : MonoBehaviour
     //components
     private float velocity;
     private int playedMidiNote;
-    private float sustain;
     private float pitch;
 
     void Update()
@@ -22,7 +21,6 @@ public class ActivityIndicator : MonoBehaviour
         //get component activity from MidiStream
         velocity = midiMaker.GetComponent<SimpleMidiStream>().velocity;
         playedMidiNote = midiMaker.GetComponent<SimpleMidiStream>().currentNote;
-        sustain = midiMaker.GetComponent<SimpleMidiStream>().mySustain;
         pitch = midiMaker.GetComponent<SimpleMidiStream>().pitchChange;
 
         //logic to activate/deactivate Indicators
@@ -36,7 +34,7 @@ public class ActivityIndicator : MonoBehaviour
         else
             rhythmIndicator.enabled = false;
 
-        if (/*sustain != 500||*/pitch != 64) 
+        if (pitch != 64) 
             modulateIndicator.enabled = true;
         else
             modulateIndicator.enabled = false;

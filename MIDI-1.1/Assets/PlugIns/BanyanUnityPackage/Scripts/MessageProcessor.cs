@@ -1,61 +1,66 @@
 ﻿using UnityEngine;
 
-//summary
-// This script does an action based on the message forwarded by BanyanMessageListener (sent by Banyan).
-// This script should be included on any object that will be doing an action, based on a message coming from Banyan
-//summary
-
 public class MessageProcessor : MonoBehaviour
 {
-    private int sensorValue;
-    private string component;
-    private string secondaryValue;
-    private string lastValue;
-    public int pressure;
-    public int note;
-    public int flutePressure;
-    public int fluteNote;
-    public int pitch = 64;
-    public int sustain;
-    public bool joyStickButton;
 
+    //Keyboards
+    public int keyboardNote;
+    public int keyboardVolume;
+
+    //Woodwinds
+    public int woodwindVolume;
+    public int woodwindNote;
+
+    //Strings
+    public int stringVolume;
+    public int stringNote;
+    public int stringPitch = 500;
+    public int stringVibrato;
+
+
+
+
+    //components send: (component name, second modulation value, component value, cube)
     public void DoAction(string action, string info, int value, string target)
     {
-        sensorValue = value;
-        component = action;
-        secondaryValue = info;
-        lastValue = target;
-
-    }
-    void Update()
-    {
-        switch (component)
+        switch (action)
         {
             case "KeyboardRhythm":
-                pressure = sensorValue;
+                keyboardVolume = value;
                 break;
             case "KeyboardMelody":
-                note = sensorValue;
+                keyboardNote = value;
                 break;
-            case "FluteRhythm":
-                flutePressure = sensorValue;
+
+            case "WoodwindRhythm":
+                woodwindVolume = value;
                 break;
-            case "FluteMelody":
-                fluteNote = sensorValue;
+            case "WoodwindMelody":
+                woodwindNote = value;
                 break;
-            case "modulate":
-                pitch = sensorValue;
-                sustain = int.Parse(secondaryValue);
-                // JoyStickButton = bool.Parse(lastValue);
+
+            case "StringRhythm":
+                stringVolume = value;
                 break;
-            case "sustain":
+            case "StringMelody":
+                stringNote = value;
+                break;
+            
+            case "StringPitch":
+                stringPitch = value;
+                break;
+            case "StringVibrato":
+                stringVibrato = int.Parse(info);
                 break;
             default:
-                pitch = 500; //default sensor value for joystick translates to defualt pitch of 64 in simpleMidiStream.cs
                 break;
 
 
         }
+    }
+    void Update()
+    {
+        
        
     }   
 }

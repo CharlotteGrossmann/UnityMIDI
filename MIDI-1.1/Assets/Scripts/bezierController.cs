@@ -17,6 +17,7 @@ public class BezierController : MonoBehaviour
     
     private bool isPlaying;
 
+
     //only the points from the spline that are affected by melody component
     private Transform[] notePoints; //keep in mind! notePoits[0] is not the first beat but the parent object
 
@@ -45,7 +46,9 @@ public class BezierController : MonoBehaviour
         //calculate how big the gap is between two notePoints
         defaultPosition = notePoints[0].transform.position; 
         defaultPosition1 = notePoints[1].transform.position; 
-        defaultGap = -(defaultPosition.x - defaultPosition1.x); 
+        defaultGap = -(defaultPosition.x - defaultPosition1.x);
+
+        
 
 
     }
@@ -65,7 +68,10 @@ public class BezierController : MonoBehaviour
         SetPosition();
        
         if (isPlaying)
+        {
+            //visualiszes in group view
             CreateVisualNote();
+        }
         else //Make sure only one note is created
             isVisualized = false; 
         
@@ -154,6 +160,7 @@ public class BezierController : MonoBehaviour
 
             //adds NoteFloater script so it floats upwards
             sphere.AddComponent<NoteFloater>();
+
             isVisualized = true;
         }
 

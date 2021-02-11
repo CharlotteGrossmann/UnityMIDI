@@ -346,7 +346,7 @@ MonoBehaviour:
   MPTK_StatVoicePlayed: 0
   playPause: 0
   distanceToListener: 0
-  transpose: 0
+  transpose: 7
   FLUID_BUFSIZE: 64
   InterpolationMethod: 1
   gain: 0.8
