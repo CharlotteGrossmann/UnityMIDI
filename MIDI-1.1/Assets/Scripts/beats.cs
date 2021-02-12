@@ -23,8 +23,8 @@ public class Beats : MonoBehaviour
 
 
     //for beat movement X-Axis
-    private int bpm;
-    private float MPS; //Meassure per Second
+    private float bpm;
+    private float mps; //Meassure per Second
     private float movement;
 
     public Vector3 meassureLength;
@@ -59,7 +59,7 @@ public class Beats : MonoBehaviour
         meassureLength.x = lastBeatInOneMeassure.x - lastBeatInAnotherMeassure.x;
 
         bpm = MainViz.GetComponent<MeassureRotator>().bpm;
-        MPS = (bpm / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
+        mps = (bpm / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
 
     }
 
@@ -106,7 +106,7 @@ public class Beats : MonoBehaviour
 
     void MoveBeats()
     {
-        movement = meassureLength.x * (Time.deltaTime*MPS); //let it move in time with the background music. time.deltaTime to apply per second not frame
+        movement = meassureLength.x * (Time.deltaTime*mps); //let it move in time with the background music. time.deltaTime to apply per second not frame
         for(var j = 1; j < allBeats.Length; j ++) //let all beats float to the left
         {
             allBeats[j].position = new Vector3(allBeats[j].position.x + movement, allBeats[j].position.y , allBeats[j].position.z); 

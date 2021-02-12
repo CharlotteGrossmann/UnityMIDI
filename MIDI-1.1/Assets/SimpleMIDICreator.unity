@@ -1689,13 +1689,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b31f0f8b35d36ab40b16fadadd12df9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instrument: 
+  isStopped: 0
   visualNote: {fileID: 235874001}
   spawnPosition: {x: 0, y: 0, z: 0}
   midiStream: {fileID: 0}
-  mainView: {fileID: 918864496}
-  woodwindColor: {r: 0, g: 0, b: 0, a: 0}
-  stringsColor: {r: 0, g: 0, b: 0, a: 0}
-  keyboardColor: {r: 0, g: 0, b: 0, a: 0}
+  self: {fileID: 0}
+  r: 0
+  g: 0
+  b: 0
+  instrumentColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!4 &235874001 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4693653493845900, guid: 379785de5e39005469c875710d3cc5a7,
@@ -9826,7 +9829,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 918864496}
-  - component: {fileID: 918864497}
   m_Layer: 0
   m_Name: MainView
   m_TagString: Untagged
@@ -9848,30 +9850,14 @@ Transform:
   - {fileID: 1994924976}
   - {fileID: 235874001}
   - {fileID: 1705537368}
+  - {fileID: 1071267575}
+  - {fileID: 1106998870}
+  - {fileID: 2011184003}
   - {fileID: 1474494262}
   - {fileID: 1500435497}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -91.809006, z: 0}
---- !u!114 &918864497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 918864495}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b31f0f8b35d36ab40b16fadadd12df9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  visualNote: {fileID: 1474494262}
-  spawnPosition: {x: 0, y: 0, z: 0}
-  midiStream: {fileID: 1022382943}
-  mainView: {fileID: 918864496}
-  woodwindColor: {r: 0, g: 0, b: 0, a: 0}
-  stringsColor: {r: 0, g: 0, b: 0, a: 0}
-  keyboardColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &919136769
 GameObject:
   m_ObjectHideFlags: 0
@@ -10358,7 +10344,7 @@ MonoBehaviour:
   instrument: {fileID: 673870079}
   vibrato: 0
   newNote: 1
-  mainView: {fileID: 918864495}
+  mainView: {fileID: 1106998869}
   instrumentName: String
   midiID: 0
 --- !u!4 &1022382945
@@ -10498,6 +10484,59 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1777a5f3c671be44f8cc4181dce53be4, type: 3}
+--- !u!1 &1071267574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1071267575}
+  - component: {fileID: 1071267576}
+  m_Layer: 0
+  m_Name: KeyboardVisualizer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1071267575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071267574}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 918864496}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1071267576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071267574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b31f0f8b35d36ab40b16fadadd12df9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  instrument: Instrument
+  isStopped: 0
+  visualNote: {fileID: 1474494262}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  midiStream: {fileID: 1716077406}
+  self: {fileID: 1071267575}
+  r: 0
+  g: 0
+  b: 0
+  instrumentColor: {r: 0.14231044, g: 0.71865684, b: 0.7735849, a: 0}
 --- !u!1 &1083564352
 GameObject:
   m_ObjectHideFlags: 0
@@ -10737,6 +10776,59 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1799531221}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1106998869
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1106998870}
+  - component: {fileID: 1106998871}
+  m_Layer: 0
+  m_Name: StringVisualizer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1106998870
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106998869}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 918864496}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1106998871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106998869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b31f0f8b35d36ab40b16fadadd12df9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  instrument: String
+  isStopped: 0
+  visualNote: {fileID: 1474494262}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  midiStream: {fileID: 1022382943}
+  self: {fileID: 1106998870}
+  r: 0
+  g: 0
+  b: 0
+  instrumentColor: {r: 0.72524285, g: 0.17332679, b: 0.8962264, a: 0}
 --- !u!1001 &1123316201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11411,6 +11503,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bpm: 60
+  meassureRotation: 0
+  mps: 0
 --- !u!1001 &1272038676
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12615,7 +12709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1474494262
 Transform:
   m_ObjectHideFlags: 0
@@ -12624,12 +12718,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474494261}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 261.1, y: -404.8, z: -859.89}
+  m_LocalPosition: {x: 263.82, y: -403.63, z: -859.7}
   m_LocalScale: {x: 0.43405584, y: 0.43405566, z: 0.43405584}
   m_Children:
   - {fileID: 1382790461}
   m_Father: {fileID: 918864496}
-  m_RootOrder: 3
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!212 &1474494263
 SpriteRenderer:
@@ -12669,7 +12763,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 182
   m_Sprite: {fileID: 21300000, guid: 394e93ce356b57344903a08ff72fcab2, type: 3}
   m_Color: {r: 1, g: 0.92156863, b: 0.80784315, a: 1}
   m_FlipX: 0
@@ -12783,7 +12877,7 @@ Transform:
   - {fileID: 343417525}
   - {fileID: 497531818}
   m_Father: {fileID: 918864496}
-  m_RootOrder: 4
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1516610452
 GameObject:
@@ -13774,7 +13868,7 @@ MonoBehaviour:
   instrument: {fileID: 673870079}
   vibrato: 0
   newNote: 1
-  mainView: {fileID: 918864495}
+  mainView: {fileID: 2011184002}
   instrumentName: Woodwind
   midiID: 0
 --- !u!4 &1591565307
@@ -14598,7 +14692,7 @@ MonoBehaviour:
   instrument: {fileID: 673870079}
   vibrato: 0
   newNote: 1
-  mainView: {fileID: 918864495}
+  mainView: {fileID: 1071267574}
   instrumentName: Keyboard
   midiID: 0
 --- !u!1001 &1721662016
@@ -16264,6 +16358,59 @@ MonoBehaviour:
     c2: 0
     c3: 0
     c4: 0
+--- !u!1 &2011184002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2011184003}
+  - component: {fileID: 2011184004}
+  m_Layer: 0
+  m_Name: WoodwindVisualizer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2011184003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011184002}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 918864496}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2011184004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011184002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b31f0f8b35d36ab40b16fadadd12df9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  instrument: Woodwind
+  isStopped: 0
+  visualNote: {fileID: 1474494262}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  midiStream: {fileID: 1591565305}
+  self: {fileID: 2011184003}
+  r: 0
+  g: 0
+  b: 0
+  instrumentColor: {r: 1, g: 0.7985291, b: 0.18396229, a: 0}
 --- !u!1 &2040184097
 GameObject:
   m_ObjectHideFlags: 0

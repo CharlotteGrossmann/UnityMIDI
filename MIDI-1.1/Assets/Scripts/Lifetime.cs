@@ -10,7 +10,7 @@ public class Lifetime : MonoBehaviour
     public GameObject midiStream;
     private bool isActive;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         isActive = midiStream.GetComponent<SimpleMidiStream>().isActive;
     }

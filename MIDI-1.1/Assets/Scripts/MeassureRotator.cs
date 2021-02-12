@@ -5,12 +5,12 @@ using UnityEngine;
 public class MeassureRotator : MonoBehaviour
 {
     //define in Unity
-    public int bpm; //beats per minute
+    public float bpm; //beats per minute
 
 
     //for meassure rotation
-    private float meassureRotation; //rotation of one meassure
-    private float mps; //Meassure per second
+    public float meassureRotation; //rotation of one meassure
+    public float mps; //Meassure per second
 
 
 
@@ -23,8 +23,7 @@ public class MeassureRotator : MonoBehaviour
 
     void Update()
     {
-        // transform.Rotate(0, 0, meassureRotation * (Time.deltaTime * mps));
-        transform.Rotate(0, 0, 3.75f * (Time.deltaTime));
+        transform.Rotate(0, 0, meassureRotation * mps * Time.deltaTime);
         
     }
 
