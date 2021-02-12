@@ -7,7 +7,7 @@ public class Beats : MonoBehaviour
     //define in Unity
     public Transform oneBeat; //the prefab for spawning new beats
 
-    public int BPM; //Beats per minute of the background song
+    public GameObject MainViz; //Main Visualizer
     
     private Transform[] allBeats; //keep in mind! allBeats[0] is not the first beat but the parent object
 
@@ -23,6 +23,7 @@ public class Beats : MonoBehaviour
 
 
     //for beat movement X-Axis
+    private int bpm;
     private float MPS; //Meassure per Second
     private float movement;
 
@@ -55,9 +56,10 @@ public class Beats : MonoBehaviour
 
         lastBeatInOneMeassure = allBeats[4].transform.position;         //calculate the length of a meassure
         lastBeatInAnotherMeassure = allBeats[8].transform.position;
-        meassureLength.x = lastBeatInOneMeassure.x - lastBeatInAnotherMeassure.x; 
+        meassureLength.x = lastBeatInOneMeassure.x - lastBeatInAnotherMeassure.x;
 
-        MPS = (BPM / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
+        bpm = MainViz.GetComponent<MeassureRotator>().bpm;
+        MPS = (bpm / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
 
     }
 
@@ -68,7 +70,7 @@ public class Beats : MonoBehaviour
         
         if (!isBeatOn&&i<=9)
         {
-            Invoke("IndicateBeats", (BPM/60f)); //invoke the beat function in time with the beat of the background music)
+            Invoke("IndicateBeats", (bpm/60f)); //invoke the beat function in time with the beat of the background music)
             isBeatOn = true;
         }  
   

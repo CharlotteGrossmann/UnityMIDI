@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class MessageProcessor : MonoBehaviour
 {
 
@@ -16,8 +17,6 @@ public class MessageProcessor : MonoBehaviour
     public int stringNote;
     public int stringPitch = 500;
     public int stringVibrato;
-
-
 
 
     //components send: (component name, second modulation value, component value, cube)

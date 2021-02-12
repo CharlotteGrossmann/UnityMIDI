@@ -16,8 +16,7 @@ namespace MidiPlayerTK
 
 
         //unimportand midi setup variables
-        [Range(0, 16)]
-        int streamChannel = 0;
+        
 
         const float DEFAULT_PITCH = 64;
 
@@ -28,7 +27,10 @@ namespace MidiPlayerTK
         
 
         //the instrument sound to simulate
-        public int instrumentSound = 0; 
+        public int instrumentSound = 0;
+
+        [Range(0, 16)]
+        public int streamChannel = 0;
 
         //Volume of the sound
         [Range(0, 127)] 
@@ -43,6 +45,7 @@ namespace MidiPlayerTK
         public float pitchChange = DEFAULT_PITCH;
         private float currentVelocityPitch;
         private float lastTimePitchChange = 0;
+        public float sensorPitch;
                                                    
         //get banyan info
         public GameObject instrument;
@@ -147,11 +150,11 @@ namespace MidiPlayerTK
 
 
                 //update the note according to banyan message
-                currentNote = instrument.GetComponent<MessageProcessor>().stringNote;
+                //currentNote = instrument.GetComponent<MessageProcessor>().stringNote;
               
 
                 //manipulate velocity
-                velocity = instrument.GetComponent<MessageProcessor>().stringVolume;
+                //velocity = instrument.GetComponent<MessageProcessor>().stringVolume;
 
                 if (velocity <= 40 && velocity>0)
                     velocity = 40;
@@ -168,11 +171,11 @@ namespace MidiPlayerTK
                 
 
                 //manipulate pitch
-                var sensorPitch = instrument.GetComponent<MessageProcessor>().stringPitch;
+                //var sensorPitch = instrument.GetComponent<MessageProcessor>().stringPitch;
                 if (sensorPitch == 500)
                     pitchChange = DEFAULT_PITCH;
                 else
-                    pitchChange = sensorPitch / 10;
+                    pitchChange = sensorPitch / 7.8f;
                 
                 vibrato = instrument.GetComponent<MessageProcessor>().stringVibrato;
                 
