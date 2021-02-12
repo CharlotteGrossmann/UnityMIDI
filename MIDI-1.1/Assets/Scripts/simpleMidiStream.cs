@@ -190,11 +190,17 @@ namespace MidiPlayerTK
                 {
                     midiID += 1;
                     Play(false);
+                    //visualizes in main view
+                    mainView.GetComponent<MainVisualizer>().NewNote(velocity, currentNote, pitchChange);
                     newNote = false;
+                    mainView.GetComponent<MainVisualizer>().isStopped = false;
                 }
             }
             else
+            {
                 isActive = false;
+                mainView.GetComponent<MainVisualizer>().isStopped = true;
+            }
 
 
             pastVelocity = velocity;
@@ -207,12 +213,8 @@ namespace MidiPlayerTK
             if (stopCurrent)
             {
                 StopOneNote(midiID);
-                mainView.GetComponent<MainVisualizer>().isStopped= true;
             }
             PlayOneNote(midiID);
-            mainView.GetComponent<MainVisualizer>().isStopped = false;
-            //visualizes in main view
-            mainView.GetComponent<MainVisualizer>().NewNote(velocity, instrumentName, currentNote, pitchChange);
 
         }
 
