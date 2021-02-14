@@ -23,17 +23,18 @@ public class BezierController : MonoBehaviour
 
 
 
+
     private Vector3 defaultPosition;
     private Vector3 defaultPosition1;
 
     private float[] melodyDifference = { 0, 0, 0, 0, 0, 0, 0, 0 }; //wave amplitude for each wave
-    public float defaultGap;
+    private float defaultGap;
     private float velocityMove;
-    private float pitchDifference;
+    private float pitchDifference = 0;
     private float pitchMove;
 
     private bool isVisualized = false;
-    
+    public bool hasModulation = false;
 
 
     void Start()
@@ -48,7 +49,6 @@ public class BezierController : MonoBehaviour
         defaultPosition1 = notePoints[1].transform.position; 
         defaultGap = -(defaultPosition.x - defaultPosition1.x);
 
-        
 
 
     }
@@ -64,7 +64,8 @@ public class BezierController : MonoBehaviour
 
         VelocityToWaves();
         NotesToAmplitute();
-        PitchToViz();
+        if(hasModulation)
+            PitchToViz();
         SetPosition();
        
         if (isPlaying)
@@ -79,13 +80,13 @@ public class BezierController : MonoBehaviour
 
     void VelocityToWaves() //velocity directly translates to the amplitutes
     {
-        velocityMove = velocity / 3f;
+        velocityMove = velocity / 300f;
 
     }
 
     void NotesToAmplitute()
     {
-        var amplitude = 50f; //how much the amplitude of the respective wave should be risen
+        var amplitude = 0.5f; //how much the amplitude of the respective wave should be risen
 
         for(var i = 0; i<8; i++)//set every notePoint to default position
         {
@@ -100,11 +101,11 @@ public class BezierController : MonoBehaviour
     void PitchToViz()
     {
             //translates pitch to deviancy on x-axis from the default position. 
-            //Times 40 to scale it up to a visible difference
-            pitchDifference = -((64 - pitch) / 100)*40f; 
+            //Times 0.4 to scale it down to an appropriate difference
+            pitchDifference = -((64f - pitch) / 100f)*0.4f; 
             
             if (pitchDifference != 0)
-                pitchMove = 20f;
+                pitchMove = 0.2f;
             else
                 pitchMove = 0;
     }
@@ -154,9 +155,10 @@ public class BezierController : MonoBehaviour
     void CreateVisualNote()
     {
         if (!isVisualized&&NoteIndex()!=-1) {  //creates a sphere at the tip of the highest wave when all components are active
+            var noteRadius = 0.3f;
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = notePoints[NoteIndex()].transform.position;
-            sphere.transform.localScale = new Vector3(30, 30, 30);
+            sphere.transform.localScale = new Vector3(noteRadius, noteRadius, noteRadius);
 
             //adds NoteFloater script so it floats upwards
             sphere.AddComponent<NoteFloater>();

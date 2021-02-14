@@ -35,11 +35,9 @@ public class Beats : MonoBehaviour
     //for beat movement Y-Axis
     private bool isBeatOn = false;
 
-    private int lastBeat;
-    private int lastMeassure;
 
     private float activeBeat;
-    private float yDifference = 30;
+    private float yDifference = 0.3f;
 
     private Vector3 inactiveBeat;
 
@@ -48,7 +46,6 @@ public class Beats : MonoBehaviour
     void Start()
     {
         allBeats = GetComponentsInChildren<Transform>(); //push all beats into the array
-        lastBeat = allBeats.Length - 1;
 
 
         activeBeat = allBeats[1].transform.position.y + yDifference;   //determine what positions inactive and active beats should have
@@ -75,7 +72,6 @@ public class Beats : MonoBehaviour
         }  
   
         MoveBeats();
-
 
 
     }
@@ -125,7 +121,7 @@ public class Beats : MonoBehaviour
     void UpdateArray()
     {
         allBeats = GetComponentsInChildren<Transform>(); //array length increases in the begining so we have to update it
-        lastBeat = allBeats.Length - 1;
+        
     }
 
 }
