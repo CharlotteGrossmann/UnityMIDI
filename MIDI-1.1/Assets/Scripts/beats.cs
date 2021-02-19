@@ -62,14 +62,11 @@ public class Beats : MonoBehaviour
 
     void Update()
     {
-
-        UpdateArray();
-        
-        
-
-
+        UpdateArray();   
     }
 
+
+    //is called after update to make sure, we're working with the updated Array and beats are not destroyed before we indicate and move them
     void lateUpdate()
     {
         if (!isBeatOn && i <= 9)
