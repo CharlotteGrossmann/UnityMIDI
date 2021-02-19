@@ -65,15 +65,20 @@ public class Beats : MonoBehaviour
 
         UpdateArray();
         
-        if (!isBeatOn&&i<=9)
+        
+
+
+    }
+
+    void lateUpdate()
+    {
+        if (!isBeatOn && i <= 9)
         {
-            Invoke("IndicateBeats", (bpm/60f)); //invoke the beat function in time with the beat of the background music)
+            Invoke("IndicateBeats", (bpm / 60f)); //invoke the beat function in time with the beat of the background music)
             isBeatOn = true;
-        }  
-  
+        }
+
         MoveBeats();
-
-
     }
 
     void IndicateBeats()

@@ -59,7 +59,6 @@ namespace MidiPlayerTK
         //
         public GameObject mainView;
         public string instrumentName;
-        public int midiID = 0;
 
         private void Awake()                                     
         {
@@ -164,7 +163,7 @@ namespace MidiPlayerTK
 
                 if (velocity == 0)
                 {
-                    StopOneNote(midiID); //not sure if this is stopping the rights notes
+                    StopOneNote(); //not sure if this is stopping the rights notes
                     newNote = true;
                 }
                    
@@ -188,7 +187,6 @@ namespace MidiPlayerTK
                 isActive = true;
                 if (newNote)
                 {
-                    midiID += 1;
                     Play(false);
                     //visualizes in main view
                     mainView.GetComponent<MainVisualizer>().NewNote(velocity, currentNote, pitchChange);
@@ -212,14 +210,14 @@ namespace MidiPlayerTK
         {        
             if (stopCurrent)
             {
-                StopOneNote(midiID);
+                StopOneNote();
             }
-            PlayOneNote(midiID);
+            PlayOneNote();
 
         }
 
         //has to be called to compose the note
-        private void PlayOneNote(int midiID)
+        private void PlayOneNote()
         {
 
             //tell lifetime that note is playing
@@ -241,7 +239,7 @@ namespace MidiPlayerTK
       
       
         //has to be called to stop the note after playing
-        private void StopOneNote(int midiID)                             
+        private void StopOneNote()                             
         {
             if (notePlaying != null)
             {
