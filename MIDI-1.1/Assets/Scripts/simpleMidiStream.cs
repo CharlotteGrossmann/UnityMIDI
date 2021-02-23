@@ -48,7 +48,7 @@ namespace MidiPlayerTK
         public float sensorPitch;
                                                    
         //get banyan info
-        public GameObject instrument;
+        public GameObject cube;
         public int vibrato;
 
         private int pastVelocity = 0;
@@ -57,7 +57,7 @@ namespace MidiPlayerTK
 
 
         //
-        public GameObject mainView;
+        public GameObject mainInstrumentVisualizer;
         public string instrumentName;
 
         private void Awake()                                     
@@ -176,7 +176,7 @@ namespace MidiPlayerTK
                 else
                     pitchChange = sensorPitch / 7.8f;
                 
-                vibrato = instrument.GetComponent<MessageProcessor>().stringVibrato;
+                vibrato = cube.GetComponent<MessageProcessor>().stringVibrato;
                 
                                
             }
@@ -189,15 +189,15 @@ namespace MidiPlayerTK
                 {
                     Play(false);
                     //visualizes in main view
-                    mainView.GetComponent<MainVisualizer>().NewNote(velocity, currentNote, pitchChange);
+                    mainInstrumentVisualizer.GetComponent<MainVisualizer>().NewNote(velocity, currentNote, pitchChange);
                     newNote = false;
-                    mainView.GetComponent<MainVisualizer>().isStopped = false;
+                    mainInstrumentVisualizer.GetComponent<MainVisualizer>().isStopped = false;
                 }
             }
             else
             {
                 isActive = false;
-                mainView.GetComponent<MainVisualizer>().isStopped = true;
+                mainInstrumentVisualizer.GetComponent<MainVisualizer>().isStopped = true;
             }
 
 

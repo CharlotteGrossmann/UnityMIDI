@@ -7,11 +7,13 @@ public class Beats : MonoBehaviour
     //define in Unity
     public Transform oneBeat; //the prefab for spawning new beats
 
-    public GameObject MainViz; //Main Visualizer
+    public GameObject Messure; //Main Visualizer
     
     private Transform[] allBeats; //keep in mind! allBeats[0] is not the first beat but the parent object
 
     private int i = 1; //to use as index in allBeats
+
+    public Transform parent;
 
 
     //spawning and destroying beats
@@ -37,37 +39,40 @@ public class Beats : MonoBehaviour
 
 
     private float activeBeat;
-    private float yDifference = 0.3f;
+    private float yDifference = 30f;
+
 
     private Vector3 inactiveBeat;
 
-
+    private float scale;
 
     void Start()
     {
         allBeats = GetComponentsInChildren<Transform>(); //push all beats into the array
 
-
-        activeBeat = allBeats[1].transform.position.y + yDifference;   //determine what positions inactive and active beats should have
+        scale = parent.transform.localScale.y;
+        activeBeat = allBeats[1].transform.position.y + yDifference*scale;   //determine what positions inactive and active beats should have
         inactiveBeat = allBeats[1].transform.position;
 
         lastBeatInOneMeassure = allBeats[4].transform.position;         //calculate the length of a meassure
         lastBeatInAnotherMeassure = allBeats[8].transform.position;
         meassureLength.x = lastBeatInOneMeassure.x - lastBeatInAnotherMeassure.x;
 
-        bpm = MainViz.GetComponent<MeassureRotator>().bpm;
+        bpm = Messure.GetComponent<MeassureRotator>().bpm;
         mps = (bpm / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
+
+        
 
     }
 
     void Update()
     {
-        UpdateArray();   
+        UpdateArray();
     }
 
 
     //is called after update to make sure, we're working with the updated Array and beats are not destroyed before we indicate and move them
-    void lateUpdate()
+    void LateUpdate()
     {
         if (!isBeatOn && i <= 9)
         {
@@ -88,7 +93,7 @@ public class Beats : MonoBehaviour
                 allBeats[k].transform.position = new Vector3(allBeats[k].transform.position.x, inactiveBeat.y, inactiveBeat.z);
             }
             allBeats[i].transform.position = new Vector3(allBeats[i].transform.position.x, activeBeat, inactiveBeat.z); //set active beat to active position
-
+            
             
             if(i<9) //as long as i<9 make i bigger, after that i will always be 9 which is roughly the beat in the middle of the screen
                 i++;
@@ -112,7 +117,7 @@ public class Beats : MonoBehaviour
             {
                 clone = Instantiate(oneBeat,spawnBeat.position, Quaternion.identity); //create new beat
                 clone.transform.SetParent(beatIndicator.transform);
-
+                print(spawnBeat.position);
                 Destroy(allBeats[j].gameObject); //destroy object when it's not in the camera view anymore
                 
             }

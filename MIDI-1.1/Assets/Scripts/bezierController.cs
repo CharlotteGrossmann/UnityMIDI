@@ -7,14 +7,17 @@ using System;
 
 public class BezierController : MonoBehaviour
 {
-   //imported variables
-    public GameObject midiMaker;
+    //asign in unity
+    public Transform parent;
+
+    //imported variables
+    public GameObject MidiStream;
 
     private float pitch;
     private float velocity;
 
     private int playedMidiNote;
-    
+
     private bool isPlaying;
 
 
@@ -36,20 +39,23 @@ public class BezierController : MonoBehaviour
     private bool isVisualized = false;
     public bool hasModulation = false;
 
+    private float scale;
 
     void Start()
     {
 
         //get all spline points and push the moveable ones into notePoints[]
-        var allPoints = GetComponentsInChildren<Transform>(); 
-        notePoints = new Transform[] { allPoints[2], allPoints[4], allPoints[6], allPoints[8], allPoints[10], allPoints[12], allPoints[14], allPoints[16]};
+        var allPoints = GetComponentsInChildren<Transform>();
+        notePoints = new Transform[] { allPoints[2], allPoints[4], allPoints[6], allPoints[8], allPoints[10], allPoints[12], allPoints[14], allPoints[16] };
 
         //calculate how big the gap is between two notePoints
-        defaultPosition = notePoints[0].transform.position; 
-        defaultPosition1 = notePoints[1].transform.position; 
+        defaultPosition = notePoints[0].transform.position;
+        defaultPosition1 = notePoints[1].transform.position;
         defaultGap = -(defaultPosition.x - defaultPosition1.x);
 
 
+
+        scale = parent.transform.localScale.y;
 
     }
 
@@ -57,42 +63,42 @@ public class BezierController : MonoBehaviour
     void Update()
     {
         //get component activty from MidiStream
-        velocity = midiMaker.GetComponent<SimpleMidiStream>().velocity;
-        playedMidiNote = midiMaker.GetComponent<SimpleMidiStream>().currentNote;
-        pitch = midiMaker.GetComponent<SimpleMidiStream>().pitchChange;
-        isPlaying = midiMaker.GetComponent<SimpleMidiStream>().isActive;
+        velocity = MidiStream.GetComponent<SimpleMidiStream>().velocity;
+        playedMidiNote = MidiStream.GetComponent<SimpleMidiStream>().currentNote;
+        pitch = MidiStream.GetComponent<SimpleMidiStream>().pitchChange;
+        isPlaying = MidiStream.GetComponent<SimpleMidiStream>().isActive;
 
         VelocityToWaves();
         NotesToAmplitute();
-        if(hasModulation)
+        if (hasModulation)
             PitchToViz();
         SetPosition();
-       
+
         if (isPlaying)
         {
             //visualiszes in group view
             CreateVisualNote();
         }
         else //Make sure only one note is created
-            isVisualized = false; 
-        
+            isVisualized = false;
+
     }
 
     void VelocityToWaves() //velocity directly translates to the amplitutes
     {
-        velocityMove = velocity / 300f;
+        velocityMove = velocity / (3f / scale);
 
     }
 
     void NotesToAmplitute()
     {
-        var amplitude = 0.5f; //how much the amplitude of the respective wave should be risen
+        var amplitude = 50f * scale; //how much the amplitude of the respective wave should be risen
 
-        for(var i = 0; i<8; i++)//set every notePoint to default position
+        for (var i = 0; i < 8; i++)//set every notePoint to default position
         {
-            melodyDifference[i] = 0; 
+            melodyDifference[i] = 0;
 
-            if(NoteIndex()!=-1)
+            if (NoteIndex() != -1)
                 melodyDifference[NoteIndex()] = amplitude; //set active notePoint to higher position
         }
 
@@ -100,22 +106,22 @@ public class BezierController : MonoBehaviour
 
     void PitchToViz()
     {
-            //translates pitch to deviancy on x-axis from the default position. 
-            //Times 0.4 to scale it down to an appropriate difference
-            pitchDifference = -((64f - pitch) / 100f)*0.4f; 
-            
-            if (pitchDifference != 0)
-                pitchMove = 0.2f;
-            else
-                pitchMove = 0;
+        //translates pitch to deviancy on x-axis from the default position. 
+        //Times 0.4 to scale it down to an appropriate difference
+        pitchDifference = -((64f - pitch) / 100f) * 0.4f;
+
+        if (pitchDifference != 0)
+            pitchMove = 20f * scale;
+        else
+            pitchMove = 0;
     }
-    
+
     void SetPosition() //calculate the position of all note points 
     {
-        for (var i = 0; i<notePoints.Length; i++)
+        for (var i = 0; i < notePoints.Length; i++)
         {
             //X takes into account the deviancy created by differences in Pitch
-            var x = (defaultPosition.x + defaultGap * i) + pitchDifference; 
+            var x = (defaultPosition.x + defaultGap * i) + pitchDifference;
 
             //Y takes into account the pitch, velocity and melody 
             var y = defaultPosition.y + velocityMove + pitchMove + melodyDifference[i];
@@ -154,8 +160,9 @@ public class BezierController : MonoBehaviour
 
     void CreateVisualNote()
     {
-        if (!isVisualized&&NoteIndex()!=-1) {  //creates a sphere at the tip of the highest wave when all components are active
-            var noteRadius = 0.3f;
+        if (!isVisualized && NoteIndex() != -1)
+        {  //creates a sphere at the tip of the highest wave when all components are active
+            var noteRadius = 30f * scale;
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = notePoints[NoteIndex()].transform.position;
             sphere.transform.localScale = new Vector3(noteRadius, noteRadius, noteRadius);
