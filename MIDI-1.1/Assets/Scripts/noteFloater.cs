@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//when a new note spawns this script gets attached and makes the note float up until its out of the cameras view
 public class NoteFloater : MonoBehaviour
 {
     private float startPosition;
-    void Awake()
+    private float upMovement = 0;
+
+    void Start()
     {
         startPosition = this.transform.position.y;
     }
-    private float upMovement = 0; 
+
     void Update()
     {
         upMovement-=0.6f*Time.deltaTime; //times time.deltaTime to apply per second not frame

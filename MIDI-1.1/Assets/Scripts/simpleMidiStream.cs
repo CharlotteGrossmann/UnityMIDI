@@ -8,7 +8,7 @@ using System;
 
 namespace MidiPlayerTK
 {
-    //this is the SIMPLE MidiStream, because it it's based on the MidiStream.cs that comes with the Midi Tool Kit Free Plugin
+    //this script is based on the TestMidiStream.cs that comes with the Midi Tool Kit plugin
     public class SimpleMidiStream : MonoBehaviour
     {
         // MPTK component able to play a stream of midi events
@@ -16,8 +16,6 @@ namespace MidiPlayerTK
 
 
         //unimportand midi setup variables
-        
-
         const float DEFAULT_PITCH = 64;
 
         private int[] indexGenerator;
@@ -27,8 +25,9 @@ namespace MidiPlayerTK
         
 
         //the instrument sound to simulate
-        public int instrumentSound = 0;
+        public int instrumentSound = 0; //used in this Prototype: 0 = Grand Stereo Piano; 24 = Nylon Guitar; 73 = Flute;
 
+        //the channel the midi data is streamed to
         [Range(0, 16)]
         public int streamChannel = 0;
 
@@ -37,58 +36,30 @@ namespace MidiPlayerTK
         public int velocity = 100;
 
         //the note currently played
-        public int currentNote = -1;
+        public int currentNote = -1; 
         private MPTKEvent notePlaying;
-        public bool isActive = false;
+        public bool isPlaying = false; //if note is playing
 
         //0 - 127
         public float pitchChange = DEFAULT_PITCH;
-        private float currentVelocityPitch;
-        private float lastTimePitchChange = 0;
+        //0-1000 (roughly)
         public float sensorPitch;
-                                                   
-        //get banyan info
-        public GameObject cube;
-        public int vibrato;
-
-        private int pastVelocity = 0;
+                           
+        //
         public bool newNote = true;
 
-
-
-        //
+        //main visualizer
         public GameObject mainInstrumentVisualizer;
-        public string instrumentName;
 
-        private void Awake()                                     
+        private void Start()                                  
         {
-            if (midiStreamPlayer != null)
+            if (midiStreamPlayer != null) //start up midi stream player
             {
                 if (!midiStreamPlayer.OnEventSynthAwake.HasEvent())
                     midiStreamPlayer.OnEventSynthAwake.AddListener(StartLoadingSynth);
             }
             else
                 Debug.LogWarning("midiStreamPlayer is not defined. Check in Unity editor inspector of this gameComponent");
-        }
-
-        // Use this for initialization
-        void Start()
-        {
-
-            GenModifier.InitListGenerator();
-            indexGenerator = new int[nbrGenerator];
-            labelGenerator = new string[nbrGenerator];
-            valueGenerator = new float[nbrGenerator];
-
-            for (int i = 0; i < nbrGenerator; i++)
-            {
-                indexGenerator[i] = GenModifier.RealTimeGenerator[0].Index;
-                labelGenerator[i] = GenModifier.RealTimeGenerator[0].Label;
-                if (indexGenerator[i] >= 0)
-                    valueGenerator[i] = GenModifier.DefaultNormalizedVal((fluid_gen_type)indexGenerator[i]) * 100f;
-            }
-
-            pitchChange = DEFAULT_PITCH;
         }
 
         public void StartLoadingSynth(string name)
@@ -119,22 +90,6 @@ namespace MidiPlayerTK
             if (!MidiPlayerGlobal.MPTK_IsReady())
                 return;
 
-            if (pitchChange != DEFAULT_PITCH)
-            {
-                // If user change the pitch, wait 1/2 second before return to median value
-                if (Time.realtimeSinceStartup - lastTimePitchChange > 0.5f)
-                {
-                    pitchChange = Mathf.SmoothDamp(pitchChange, DEFAULT_PITCH, ref currentVelocityPitch, 0.5f, 100, Time.unscaledDeltaTime);
-                    if (Mathf.Abs(pitchChange - DEFAULT_PITCH) < 0.1f)
-                        pitchChange = DEFAULT_PITCH;
-                    //PitchChange = Mathf.Lerp(PitchChange, DEFAULT_PITCH, Time.deltaTime*10f);
-                    //Debug.Log("DEFAULT_PITCH " + DEFAULT_PITCH + " " + PitchChange + " " + currentVelocityPitch);
-                      midiStreamPlayer.MPTK_PlayEvent(new MPTKEvent() { Command = MPTKCommand.PitchWheelChange, Value = (int)pitchChange << 7, Channel = streamChannel });
-                }
-            }            
-            
-
-
             //create notes here!!!
             if (midiStreamPlayer != null)
             {
@@ -148,13 +103,7 @@ namespace MidiPlayerTK
                 });
 
 
-                //update the note according to banyan message
-                //currentNote = instrument.GetComponent<MessageProcessor>().stringNote;
-              
-
-                //manipulate velocity
-                //velocity = instrument.GetComponent<MessageProcessor>().stringVolume;
-
+                //velocity handeling
                 if (velocity <= 40 && velocity>0)
                     velocity = 40;
 
@@ -163,45 +112,36 @@ namespace MidiPlayerTK
 
                 if (velocity == 0)
                 {
-                    StopOneNote(); //not sure if this is stopping the rights notes
+                    StopOneNote(); //note stops when velocity stops
                     newNote = true;
                 }
                    
-                
-
-                //manipulate pitch
-                //var sensorPitch = instrument.GetComponent<MessageProcessor>().stringPitch;
+                //pitch handeling
                 if (sensorPitch == 500)
                     pitchChange = DEFAULT_PITCH;
                 else
-                    pitchChange = sensorPitch / 7.8f;
-                
-                vibrato = cube.GetComponent<MessageProcessor>().stringVibrato;
-                
+                    pitchChange = sensorPitch / 7.8f; //translate 0-1000 roughly to 0-127            
                                
             }
 
             //only play if all components are active
-            if (velocity != 0 && currentNote != -1 && (pitchChange != 64))
+            if (velocity != 0 && currentNote != -1 && pitchChange != 64)
             {
-                isActive = true;
+                isPlaying = true;
                 if (newNote)
                 {
                     Play(false);
                     //visualizes in main view
                     mainInstrumentVisualizer.GetComponent<MainVisualizer>().NewNote(velocity, currentNote, pitchChange);
-                    newNote = false;
                     mainInstrumentVisualizer.GetComponent<MainVisualizer>().isStopped = false;
+                    newNote = false;
                 }
             }
             else
             {
-                isActive = false;
+                isPlaying = false;
                 mainInstrumentVisualizer.GetComponent<MainVisualizer>().isStopped = true;
             }
-
-
-            pastVelocity = velocity;
 
         }
         
@@ -219,9 +159,6 @@ namespace MidiPlayerTK
         //has to be called to compose the note
         private void PlayOneNote()
         {
-
-            //tell lifetime that note is playing
-
             //Debug.Log($"{StreamChannel} {midiStreamPlayer.MPTK_ChannelPresetGetName(StreamChannel)}");
             // Start playing a new note
             notePlaying = new MPTKEvent()
@@ -243,11 +180,7 @@ namespace MidiPlayerTK
         {
             if (notePlaying != null)
             {
-                //tell lifetime that the midi note is stoped
-
                 //Debug.Log("Stop note");
-                // Stop the note (method to simulate a real human on a keyboard : 
-                // duration is not known when note is triggered)
                 midiStreamPlayer.MPTK_StopEvent(notePlaying);
                 notePlaying = null;
                

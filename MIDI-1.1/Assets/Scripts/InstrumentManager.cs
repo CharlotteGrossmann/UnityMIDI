@@ -5,27 +5,31 @@ using MidiPlayerTK;
 using System;
 public class InstrumentManager : MonoBehaviour
 {
-
+    //define in unity
     public GameObject keyboards;
     public GameObject woodwinds;
     public GameObject strings;
-    public GameObject messageProcessor;
+    public GameObject cube;
 
 
     //give the right input to the right midi stream
     void Update()
     {
-        keyboards.GetComponent<SimpleMidiStream>().velocity = messageProcessor.GetComponent<MessageProcessor>().keyboardVolume;
-        keyboards.GetComponent<SimpleMidiStream>().currentNote = messageProcessor.GetComponent<MessageProcessor>().keyboardNote;
-        keyboards.GetComponent<SimpleMidiStream>().sensorPitch = 501;
+        var distributor = cube.GetComponent<MessageProcessor>();
+        var keyboardVar = keyboards.GetComponent<SimpleMidiStream>();
+        var woodwindVar = woodwinds.GetComponent<SimpleMidiStream>();
+        var stringVar = strings.GetComponent<SimpleMidiStream>();
 
-        woodwinds.GetComponent<SimpleMidiStream>().currentNote = messageProcessor.GetComponent<MessageProcessor>().woodwindNote;
-        woodwinds.GetComponent<SimpleMidiStream>().velocity = messageProcessor.GetComponent<MessageProcessor>().woodwindVolume;
-        woodwinds.GetComponent<SimpleMidiStream>().sensorPitch = 501;
+        keyboardVar.velocity = distributor.keyboardVolume;
+        keyboardVar.currentNote = distributor.keyboardNote;
+        keyboardVar.sensorPitch = 501;
 
-        strings.GetComponent<SimpleMidiStream>().currentNote = messageProcessor.GetComponent<MessageProcessor>().stringNote;
-        strings.GetComponent<SimpleMidiStream>().sensorPitch = messageProcessor.GetComponent<MessageProcessor>().stringPitch;
-        strings.GetComponent<SimpleMidiStream>().vibrato = messageProcessor.GetComponent<MessageProcessor>().stringVibrato;
-        strings.GetComponent<SimpleMidiStream>().velocity = messageProcessor.GetComponent<MessageProcessor>().stringVolume;
+        woodwindVar.currentNote = distributor.woodwindNote;
+        woodwindVar.velocity = distributor.woodwindVolume;
+        woodwindVar.sensorPitch = 501;
+
+        stringVar.currentNote = distributor.stringNote;
+        stringVar.sensorPitch = distributor.stringPitch;
+        stringVar.velocity = distributor.stringVolume;
     }
 }

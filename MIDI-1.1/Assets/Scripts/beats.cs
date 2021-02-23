@@ -8,12 +8,15 @@ public class Beats : MonoBehaviour
     public Transform oneBeat; //the prefab for spawning new beats
 
     public GameObject Messure; //Main Visualizer
-    
-    private Transform[] allBeats; //keep in mind! allBeats[0] is not the first beat but the parent object
+
+    public Transform parent;
+
+
+    //all beats in an array
+    private Transform[] allBeats; //ATTENTION! allBeats[0] is not the first beat but the parent object
 
     private int i = 1; //to use as index in allBeats
 
-    public Transform parent;
 
 
     //spawning and destroying beats
@@ -21,13 +24,11 @@ public class Beats : MonoBehaviour
     public Transform destroyBeat;
     public Transform beatIndicator;
 
-    private Transform clone;
-
 
     //for beat movement X-Axis
-    private float bpm;
+    private float bpm; //Beats per Minute
     private float mps; //Meassure per Second
-    private float movement;
+    private float movement; 
 
     public Vector3 meassureLength;
     private Vector3 lastBeatInOneMeassure;
@@ -35,49 +36,39 @@ public class Beats : MonoBehaviour
     
 
     //for beat movement Y-Axis
-    private bool isBeatOn = false;
+    private bool isBeatIndicated = false;
 
 
-    private float activeBeat;
-    private float yDifference = 30f;
+    private float activeBeat; //yposition of the active beat
+    private float yDifference = 30f; //how much the active beat is lifted up
 
+    private Vector3 inactiveBeat; //position of inactive beats
 
-    private Vector3 inactiveBeat;
-
-    private float scale;
+    private float scale; //scaling of the group 
 
     void Start()
     {
         allBeats = GetComponentsInChildren<Transform>(); //push all beats into the array
 
-        scale = parent.transform.localScale.y;
-        activeBeat = allBeats[1].transform.position.y + yDifference*scale;   //determine what positions inactive and active beats should have
-        inactiveBeat = allBeats[1].transform.position;
+        scale = parent.transform.localScale.y; //get the scale from the parents transform
+        activeBeat = allBeats[1].position.y + yDifference*scale;   //calculate the position for active beats
+        inactiveBeat = allBeats[1].position; //save position of inactive beats
 
-        lastBeatInOneMeassure = allBeats[4].transform.position;         //calculate the length of a meassure
-        lastBeatInAnotherMeassure = allBeats[8].transform.position;
+        //calculate the length of a meassure
+        lastBeatInOneMeassure = allBeats[4].position;         
+        lastBeatInAnotherMeassure = allBeats[8].position;
         meassureLength.x = lastBeatInOneMeassure.x - lastBeatInAnotherMeassure.x;
 
-        bpm = Messure.GetComponent<MeassureRotator>().bpm;
+        bpm = Messure.GetComponent<MeassureRotator>().bpm; //get bpm from messure rotator in main view
         mps = (bpm / 60f) / 4f; //Beats per Minute / 60 Seconds = Beats per 1 Second / 4 = Meassure per 1 Second
-
-        
-
     }
 
     void Update()
     {
-        UpdateArray();
-    }
-
-
-    //is called after update to make sure, we're working with the updated Array and beats are not destroyed before we indicate and move them
-    void LateUpdate()
-    {
-        if (!isBeatOn && i <= 9)
+        if (!isBeatIndicated)
         {
-            Invoke("IndicateBeats", (bpm / 60f)); //invoke the beat function in time with the beat of the background music)
-            isBeatOn = true;
+            Invoke("IndicateBeats", (bpm / 60f)); //invoke the beat function in time with the beat of the background music (second parameter is time in seconds)
+            isBeatIndicated = true;
         }
 
         MoveBeats();
@@ -85,24 +76,22 @@ public class Beats : MonoBehaviour
 
     void IndicateBeats()
     {
-       
-        if (isBeatOn)
+        if (isBeatIndicated)
         {
-            for (var k = 0; k<allBeats.Length; k++) //set all beats to inactive position
-            {
-                allBeats[k].transform.position = new Vector3(allBeats[k].transform.position.x, inactiveBeat.y, inactiveBeat.z);
-            }
-            allBeats[i].transform.position = new Vector3(allBeats[i].transform.position.x, activeBeat, inactiveBeat.z); //set active beat to active position
+           for (var k = 0; k<allBeats.Length; k++) //set all beats to inactive position
+           {
+               allBeats[k].position = new Vector3(allBeats[k].position.x, inactiveBeat.y, inactiveBeat.z); //since all beats move to the left, x has to be a variable
+           }
+           allBeats[i].position = new Vector3(allBeats[i].position.x, activeBeat, inactiveBeat.z); //set active beat to active position
             
-            
-            if(i<9) //as long as i<9 make i bigger, after that i will always be 9 which is roughly the beat in the middle of the screen
+            //make i loop trough the array
+            if (i<allBeats.Length) 
                 i++;
+            if (i == allBeats.Length)
+                i = 1;
+            isBeatIndicated = false; //ensure the function is called just once
             
-            isBeatOn = false; //ensure the function is called just once
-            
-           
         }
-
 
     }
 
@@ -113,21 +102,11 @@ public class Beats : MonoBehaviour
         for(var j = 1; j < allBeats.Length; j ++) //let all beats float to the left
         {
             allBeats[j].position = new Vector3(allBeats[j].position.x + movement, allBeats[j].position.y , allBeats[j].position.z); 
-            if (allBeats[j].position.x < destroyBeat.position.x) // if meassure is out of camera view
-            {
-                clone = Instantiate(oneBeat,spawnBeat.position, Quaternion.identity); //create new beat
-                clone.transform.SetParent(beatIndicator.transform);
-                print(spawnBeat.position);
-                Destroy(allBeats[j].gameObject); //destroy object when it's not in the camera view anymore
-                
-            }
-        }
-        
-    }
 
-    void UpdateArray()
-    {
-        allBeats = GetComponentsInChildren<Transform>(); //array length increases in the begining so we have to update it
+            if (allBeats[j].position.x < destroyBeat.position.x) // if meassure is out of camera view
+                allBeats[j].position = new Vector3 (spawnBeat.position.x, allBeats[j].position.y, allBeats[j].position.z); //teleport it to the spawn point
+         
+        }
         
     }
 

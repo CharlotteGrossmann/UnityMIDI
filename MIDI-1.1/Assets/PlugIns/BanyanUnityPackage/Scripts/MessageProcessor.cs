@@ -3,7 +3,6 @@
 
 public class MessageProcessor : MonoBehaviour
 {
-
     //Keyboards
     public int keyboardNote;
     public int keyboardVolume;
@@ -18,8 +17,8 @@ public class MessageProcessor : MonoBehaviour
     public int stringPitch = 500;
     public int stringVibrato;
 
-
     //components send: (component name, second modulation value, component value, cube)
+    //(yes the variable names and types make no sense but the effort/usefullness ratio wasn't good enough to change them)
     public void DoAction(string action, string info, int value, string target)
     {
         switch (action)
@@ -56,10 +55,5 @@ public class MessageProcessor : MonoBehaviour
 
 
         }
-    }
-    void Update()
-    {
-        
-       
-    }   
+    } 
 }

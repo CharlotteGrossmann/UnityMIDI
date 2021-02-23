@@ -4,26 +4,24 @@ using UnityEngine;
 
 public class MainVisualizer : MonoBehaviour
 {
-    //assign in Unity
-    public string instrument;
-    public GameObject midiStream;
 
-    //note spawning variables
+    //assign in Unity
     public Transform visualNote; //note prefab
     public Transform self; //parent object
 
+    //note spawning variables
     private Transform clone;    //cloned object
     private Vector3 spawnPosition;
     
 
-    //when note isn't playing anymore
+    //if note stopped playing
     public bool isStopped;
 
     //color variables
-    public float H;
-    public float S;
-    public float V;
-    public float oppacity = 1;
+    private float H;
+    private float S;
+    private float V;
+    private float oppacity = 1;
 
 
     void Start()
@@ -34,9 +32,9 @@ public class MainVisualizer : MonoBehaviour
         Color.RGBToHSV(thisColor, out H, out S, out V);
 
         //get position of prefab (because it's in the middle of the circle)
-        spawnPosition = visualNote.position;        //roughly (591, 0, 527);
+        spawnPosition = visualNote.position;        
 
-        //disable sprite of the prefab so it's not visible in the game anyomer
+        //disable sprite of the prefab so it's not visible in the game
         prefabSprite.enabled = false;
 
 
@@ -59,21 +57,20 @@ public class MainVisualizer : MonoBehaviour
 
     public void NewNote(float velocity, int note, float pitch)
     {       
-        clone = Instantiate(visualNote, spawnPosition, Quaternion.identity); //create new note
+        clone = Instantiate(visualNote, spawnPosition, Quaternion.identity); //copy the note prefab and spawn it at the spawnPosition
 
         //change oppacity according to volume
-        oppacity = velocity / 127;//velocity is 0-127, oppacity smaller than 128 is not visible, so min of opaccity is 128 max is 255
+        oppacity = velocity / 127;//velocity is 0-127, oppacity is 0-1
         var sprite = clone.GetComponent<SpriteRenderer>();
-        sprite.enabled = true;
-        sprite.color = new Color(sprite.color.a, sprite.color.g, sprite.color.b, oppacity);
+        sprite.enabled = true; //we have to enable the sprite because in the prefab it's disabled
+        sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, oppacity); //turn the sprite to customised color
 
-        var difference = 5;
 
         //change difference in brightness according to pitch and note
         //the higher the note, the brighter the color
+        var difference = 5;
         switch (note)
-        {
-            
+        {   
             case 42:
                 difference *= -4;
                 break;
@@ -102,7 +99,7 @@ public class MainVisualizer : MonoBehaviour
                 break;
         }
         
-        //aplly difference in brightness to the sprite color
+        //apply difference in brightness to the sprite color
         sprite.color = Color.HSVToRGB(H, S - difference -((64 - pitch) / 100) * 40f , V);
 
         clone.transform.SetParent(self.transform); //set note as child
