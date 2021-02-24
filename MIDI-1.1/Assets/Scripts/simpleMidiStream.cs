@@ -16,13 +16,7 @@ namespace MidiPlayerTK
 
 
         //unimportand midi setup variables
-        const float DEFAULT_PITCH = 64;
-
-        private int[] indexGenerator;
-        private string[] labelGenerator;
-        private float[] valueGenerator;
-        private const int nbrGenerator = 4;
-        
+        const float DEFAULT_PITCH = 64;     
 
         //the instrument sound to simulate
         public int instrumentSound = 0; //used in this Prototype: 0 = Grand Stereo Piano; 24 = Nylon Guitar; 73 = Flute;
