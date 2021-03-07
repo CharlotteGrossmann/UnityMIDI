@@ -126,7 +126,7 @@ public class BezierController : MonoBehaviour
             //Z stays the same always
             var z = notePoints[i].transform.position.z;
 
-            notePoints[i].transform.position = new Vector3(x, y, z);
+            notePointsS.transform.position = new Vector3(x, y, z);
         }
     }
 
